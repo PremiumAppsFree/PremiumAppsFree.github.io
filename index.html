@@ -1,0 +1,174 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Premium Apps Free</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    body {
+      background: #0f0f0f;
+      color: #fff;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background: #1c1c1c;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+    .logo {
+      height: 40px;
+      width: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .telegram-link {
+      margin: 0 15px;
+    }
+    .telegram-link img {
+      height: 30px;
+    }
+    .search {
+      background: #333;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      color: white;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+    .app-card {
+      background: #1f1f1f;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      transition: transform 0.3s;
+    }
+    .app-card:hover {
+      transform: scale(1.03);
+    }
+    .app-card img {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 16 / 9;
+      border-radius: 10px;
+      cursor: pointer;
+      object-fit: cover;
+    }
+    .app-card h3 {
+      margin: 10px 0;
+      font-size: 18px;
+    }
+    .app-card button {
+      background: #00c853;
+      border: none;
+      padding: 10px 15px;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background: #222;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+    }
+    .modal-content h2 {
+      margin-bottom: 15px;
+    }
+    .modal-content button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      border: none;
+      background: #00c853;
+      color: white;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="https://i.ibb.co/MyjL8DZk/IMG-20250502-151238-214.jpg" alt="Logo" class="logo">
+    <a href="https://t.me/apps_pro_freee" class="telegram-link" target="_blank">
+      <img src="https://i.ibb.co/844sJLWV/800px-Telegram-2019-Logo-svg.png" alt="Telegram">
+    </a>
+    <input type="text" class="search" placeholder="Search apps..." oninput="filterApps(this.value)" />
+  </header>  <div class="grid" id="appGrid">
+    <div class="app-card" data-name="Capcut Pro">
+      <img src="https://i.ibb.co/s9ZbQPCk/1200x630wa.png" alt="Capcut Pro" onclick="showPopup('Capcut Pro', 'https://arolinks.com/nhV2V')">
+      <h3>Capcut Pro</h3>
+      <button onclick="showPopup('Capcut Pro', 'https://arolinks.com/nhV2V')">Download</button>
+    </div>
+    <div class="app-card" data-name="Netflix Premium">
+      <img src="https://i.ibb.co/XxtRx0gf/31-Jf-J6d-XD9-L.png" alt="Netflix Premium" onclick="showPopup('Netflix Premium', 'https://arolinks.com/COiL')">
+      <h3>Netflix Premium</h3>
+      <button onclick="showPopup('Netflix Premium', 'https://arolinks.com/COiL')">Download</button>
+    </div>
+  </div>  <div class="modal" id="popup">
+    <div class="modal-content">
+      <h2 id="popup-title">Download App</h2>
+      <button id="download-btn">Download</button>
+      <<button onclick="document.getElementById('vimeoPlayer').style.display='block'">How to Download</button>
+
+<!-- Hidden Vimeo Player -->
+<div id="vimeoPlayer" style="display: none; margin-top: 20px;">
+  <iframe src="https://player.vimeo.com/video/1080856907" width="100%" height="360" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+</div>
+    </div>
+  </div>  <script>
+    function showPopup(appName, link) {
+      document.getElementById('popup-title').innerText = `Download ${appName}`;
+      document.getElementById('download-btn').onclick = function() {
+        window.location.href = link;
+      };
+      document.getElementById('popup').style.display = 'flex';
+    }
+
+    document.getElementById('popup').onclick = function(e) {
+      if (e.target.id === 'popup') {
+        this.style.display = 'none';
+      }
+    }
+
+    function filterApps(value) {
+      const apps = document.querySelectorAll('.app-card');
+      apps.forEach(app => {
+        const name = app.getAttribute('data-name').toLowerCase();
+        if (name.includes(value.toLowerCase())) {
+          app.style.display = 'block';
+        } else {
+          app.style.display = 'none';
+        }
+      });
+    }
+  </script></body>
+</html>
