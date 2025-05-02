@@ -1,29 +1,4 @@
 <!DOCTYPE html><html lang="en"><head>
-  <!-- Primary Meta Tags -->
-<title>Premium Apps Free - Download Paid Android Apps for Free</title>
-<meta name="title" content="Premium Apps Free - Download Paid Android Apps for Free">
-<meta name="description" content="Get the latest premium Android apps absolutely free. No login, no ads, direct download links. Updated daily with modded APKs and pro apps.">
-
-<!-- Open Graph / Facebook -->
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://yourdomain.com/">
-<meta property="og:title" content="Premium Apps Free - Download Paid Android Apps for Free">
-<meta property="og:description" content="Download modded, premium and pro Android apps for free. Easy, fast and direct download links.">
-<meta property="og:image" content="https://ibb.co/YBQmCPCj"> <!-- Replace with correct image link -->
-
-<!-- Twitter -->
-<meta property="twitter:card" content="summary_large_image">
-<meta property="twitter:url" content="https://yourdomain.com/">
-<meta property="twitter:title" content="Premium Apps Free - Download Paid Android Apps for Free">
-<meta property="twitter:description" content="Best site to download paid Android apps, games and tools for free. No annoying ads or signups.">
-<meta property="twitter:image" content="https://ibb.co/YBQmCPCj"> <!-- Replace with correct image link -->
-
-<!-- Additional SEO Meta -->
-<meta name="keywords" content="premium apps free, mod apk, download paid apps free, android apps free, pro apk, unlocked apps, apk mod, free apps site">
-<meta name="robots" content="index, follow">
-<meta name="author" content="Rao Jatin">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="google-site-verification" content="Y4C8a-KIUmatYsuB3CnUenf2rqnRKi-fSN3l53N1zoY" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Premium Apps Free</title>
@@ -138,6 +113,75 @@
       font-size: 16px;
       cursor: pointer;
     }
+
+    /* AI Floating Button */
+    #ai-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #00c853;
+      color: white;
+      border-radius: 50%;
+      width: 55px;
+      height: 55px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      font-size: 18px;
+      cursor: pointer;
+      z-index: 9999;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+      transition: transform 0.3s ease;
+    }
+    #ai-button:hover {
+      transform: scale(1.1);
+    }
+
+    /* Popup Form */
+    #popup-form {
+      display: none;
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      background: #1c1c1c;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      z-index: 9998;
+      width: 90%;
+      max-width: 300px;
+      animation: fadeIn 0.3s ease;
+      flex-direction: column;
+    }
+    #popup-form input, #popup-form textarea {
+      background: #333;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      color: white;
+      width: 100%;
+    }
+    #popup-form button {
+      background: #00c853;
+      border: none;
+      padding: 10px;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
   </style>
 </head>
 <body>
@@ -147,7 +191,9 @@
       <img src="https://i.ibb.co/844sJLWV/800px-Telegram-2019-Logo-svg.png" alt="Telegram">
     </a>
     <input type="text" class="search" placeholder="Search apps..." oninput="filterApps(this.value)" />
-  </header>  <div class="grid" id="appGrid">
+  </header>
+
+  <div class="grid" id="appGrid">
     <div class="app-card" data-name="Capcut Pro">
       <img src="https://i.ibb.co/s9ZbQPCk/1200x630wa.png" alt="Capcut Pro" onclick="showPopup('Capcut Pro', 'https://arolinks.com/nhV2V')">
       <h3>Capcut Pro</h3>
@@ -158,18 +204,28 @@
       <h3>Netflix Premium</h3>
       <button onclick="showPopup('Netflix Premium', 'https://arolinks.com/COiL')">Download</button>
     </div>
-  </div>  <div class="modal" id="popup">
+  </div>
+
+  <div class="modal" id="popup">
     <div class="modal-content">
       <h2 id="popup-title">Download App</h2>
       <button id="download-btn">Download</button>
-      <<button onclick="document.getElementById('vimeoPlayer').style.display='block'">How to Download</button>
-
-<!-- Hidden Vimeo Player -->
-<div id="vimeoPlayer" style="display: none; margin-top: 20px;">
-  <iframe src="https://player.vimeo.com/video/1080856907" width="100%" height="360" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
-</div>
+      <button onclick="document.getElementById('vimeoPlayer').style.display='block'">How to Download</button>
+      <div id="vimeoPlayer" style="display: none; margin-top: 20px;">
+        <iframe src="https://player.vimeo.com/video/1080856907" width="100%" height="360" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+      </div>
     </div>
-  </div>  <script>
+  </div>
+
+  <!-- AI Button and Form -->
+  <div id="ai-button">AI</div>
+  <div id="popup-form">
+    <input type="text" id="userName" placeholder="Your Name">
+    <textarea id="userProblem" rows="4" placeholder="Submit your problem..."></textarea>
+    <button onclick="sendToTelegram()">Send to Owner</button>
+  </div>
+
+  <script>
     function showPopup(appName, link) {
       document.getElementById('popup-title').innerText = `Download ${appName}`;
       document.getElementById('download-btn').onclick = function() {
@@ -195,5 +251,46 @@
         }
       });
     }
-  </script></body>
+
+    // AI Button Logic
+    const aiButton = document.getElementById('ai-button');
+    const popupForm = document.getElementById('popup-form');
+
+    aiButton.addEventListener('click', () => {
+      popupForm.style.display = popupForm.style.display === 'flex' ? 'none' : 'flex';
+    });
+
+    function sendToTelegram() {
+      const name = document.getElementById('userName').value.trim();
+      const problem = document.getElementById('userProblem').value.trim();
+
+      if (name === '' || problem === '') {
+        alert("Please fill all fields!");
+        return;
+      }
+
+      const message = `New Problem Submission:\n\nName: ${name}\nProblem: ${problem}`;
+      const botToken = "7673574525:AAELgDCE0ylZ3CEEJMPb8mGmAbQBgnpCJUg";
+      const chatId = "8078601139";
+      const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+      fetch(url, {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: chatId, text: message })
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert("Message sent to owner!");
+        popupForm.style.display = "none";
+        document.getElementById('userName').value = '';
+        document.getElementById('userProblem').value = '';
+      })
+      .catch(err => {
+        alert("Error sending message.");
+        console.error(err);
+      });
+    }
+  </script>
+</body>
 </html>
