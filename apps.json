@@ -238,5 +238,15 @@
         "size": "88 MB",
         "sizeInMB": 88,
         "category": "Media"
+    },
+    {
+                id: 25,
+                name:Kinemaster PRO
+                img: https://i.ibb.co/WNq39qdq/IMG-20250630-212617-019.jpg
+                link: https://arolinks.com/4Nq
+                version:7.6.24.34812.GP
+                size: "88 MB",
+                sizeInMB: 88,
+                category: "Media"
     }
 ]
