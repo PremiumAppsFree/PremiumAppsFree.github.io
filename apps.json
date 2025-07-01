@@ -1,14 +1,15 @@
 [
-    {
-        "id": 1,
-        "name": "Capcut Pro latest",
-        "img": "https://i.ibb.co/8nfQYTZt/g-1.png",
-        "link": "https://arolinks.com/LOBjY",
-        "version": "14.7.0 Latest",
-        "size": "98 MB",
-        "sizeInMB": 98,
-        "category": "Media"
-    },
+  {
+    "id": 1,
+    "name": "Capcut Pro is Working",  // <--- এই পরিবর্তনটি করুন
+    "img": "https://i.ibb.co/8nfQYTZt/g-1.png",
+    "link": "https://arolinks.com/LOBjY",
+    "version": "14.7.0",
+    "size": "98 MB",
+    "sizeInMB": 98,
+    "category": "Media"
+  },
+  
     {
         "id": 2,
         "name": "SuperVPN_Pro",
