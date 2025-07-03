@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Premium Apps Free</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    
+    <style>
+        :root {
+            --background-dark: #121212;
+            --card-dark: #1e1e1e;
+            --header-dark: #1e1e1e;
+            --text-primary-dark: #e0e0e0;
+            --text-secondary-dark: #b0b0b0;
+            --accent-green: #00c853;
+            --accent-red: #d9534f;
+            --accent-blue: #2979ff;
+
+            --background-light: #f0f2f5;
+            --card-light: #ffffff;
+            --header-light: #ffffff;
+            --text-primary-light: #1c1c1e;
+            --text-secondary-light: #65676b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        #preloader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 99999; background: var(--background-dark); display: flex; justify-content: center; align-items: center; opacity: 1; visibility: visible; transition: opacity 0.5s ease-out, visibility 0s 0.5s; }
+        body:not(.preloader-active) #preloader { opacity: 0; visibility: hidden; }
+        #preloader img { width: 100px; height: 100px; border-radius: 50%; animation: pulse 1.5s ease-in-out infinite; }
+        @keyframes pulse { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 200, 83, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 20px rgba(0, 200, 83, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 200, 83, 0); } }
+        body { background: var(--background-dark); color: var(--text-primary-dark); transition: background 0.3s, color 0.3s; }
+        body.light-mode { background: var(--background-light); color: var(--text-primary-light); }
+        body.light-mode header, body.light-mode .app-card, body.light-mode .modal-content, body.light-mode #popup-form, body.light-mode footer, body.light-mode #settings-modal, body.light-mode #load-more-btn { background: var(--card-light); color: var(--text-primary-light); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
+        body.light-mode .modal-content { background: var(--card-light); }
+        body.light-mode header.search-active .search-container { background-color: #e4e6eb; }
+        body.light-mode .search-container .search { color: #050505; }
+        body.light-mode .telegram-link { background-color: #f0f2f5; }
+        body.light-mode .search, body.light-mode #popup-form input, body.light-mode #popup-form textarea, body.light-mode #sort-select, body.light-mode #language-select, body.light-mode #items-per-page-select { background: #e4e6eb; color: #050505; }
+        body.light-mode .app-info, body.light-mode #settings-modal .close-btn, body.light-mode .sort-note, body.light-mode .about-section p, body.light-mode .changelog-content li { color: var(--text-secondary-light); }
+        body.light-mode .search-icon svg { stroke: var(--text-secondary-light); }
+        body.light-mode header.search-active .search-icon svg { stroke: var(--text-secondary-light); }
+        body.light-mode .app-card h3 { color: var(--text-primary-light); }
+        body.light-mode .app-card { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }
+        body.light-mode .app-card:hover { box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12); }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: var(--header-dark); box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); position: sticky; top: 0; z-index: 100; }
+        .logo { height: 40px; width: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+        .telegram-link { display: flex; justify-content: center; align-items: center; width: 40px; height: 40px; border-radius: 50%; margin-left: 10px; background-color: #333; transition: background-color 0.3s; flex-shrink: 0; }
+        .telegram-link:hover { background-color: #444; }
+        .telegram-link img { height: 22px; }
+        .site-title { flex-grow: 1; text-align: center; font-size: 18px; font-weight: 600; margin: 0 10px; white-space: nowrap; opacity: 1; transform: scale(1); transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1); }
+        header.search-active .site-title { opacity: 0; transform: scale(0.9); width: 0; margin: 0; }
+        .search-container { position: relative; display: flex; align-items: center; width: 40px; height: 40px; background-color: var(--accent-green); border-radius: 25px; transition: width 0.4s cubic-bezier(0.23, 1, 0.32, 1), background-color 0.4s; flex-shrink: 0; }
+        header.search-active .search-container { width: 250px; background-color: #333; }
+        body.light-mode header.search-active .search-container { background-color: #e4e6eb; }
+        .search { width: 100%; height: 100%; border: none; background: transparent; color: white; padding: 0 45px 0 20px; font-size: 14px; outline: none; opacity: 0; transition: opacity 0.3s ease 0.1s; }
+        header.search-active .search { opacity: 1; }
+        .search-icon { position: absolute; right: 0; top: 0; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 50%; }
+        .search-icon svg { width: 20px; height: 20px; stroke: #ffffff; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+        header.search-active .search-icon svg { stroke: var(--text-secondary-dark); }
+        .search-icon .search-circle, .search-icon .search-line1, .search-icon .close-line1, .search-icon .close-line2 { transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1); }
+        .search-icon .close-line1, .search-icon .close-line2 { opacity: 0; stroke-dasharray: 20; stroke-dashoffset: 20; }
+        header.search-active .search-icon .search-circle { transform-origin: center; transform: scale(0.5); opacity: 0; }
+        header.search-active .search-icon .search-line1 { transform: rotate(45deg); opacity: 0; }
+        header.search-active .search-icon .close-line1, header.search-active .search-icon .close-line2 { opacity: 1; stroke-dashoffset: 0; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; padding: 20px; min-height: 200px; }
+        .app-card { background: var(--card-dark); border-radius: 16px; padding: 16px; text-align: left; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); transition: transform 0.2s ease, box-shadow 0.2s ease; display: flex; flex-direction: column; }
+        .app-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5); }
+        .app-icon-container { width: 100%; aspect-ratio: 1 / 1; border-radius: 22%; overflow: hidden; margin-bottom: 12px; background-color: #333; }
+        .app-icon-container img { width: 100%; height: 100%; object-fit: cover; }
+        .app-text-content { flex-grow: 1; }
+        .app-card h3 { font-size: 16px; font-weight: 500; color: var(--text-primary-dark); margin-bottom: 4px; }
+        .app-info { font-size: 13px; color: var(--text-secondary-dark); }
+        button { position: relative; overflow: hidden; transition: transform 0.2s ease; -webkit-tap-highlight-color: transparent; outline: none; }
+        button>span { position: relative; z-index: 2; }
+        button::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.3), transparent); transition: left 0.6s ease; z-index: 1; }
+        button:hover::before { left: 100%; }
+        .app-card button { background: var(--accent-green); border: none; padding: 10px 15px; color: white; border-radius: 8px; cursor: pointer; width: 100%; margin-top: 16px; font-weight: 600; }
+        .grid.list-view { grid-template-columns: 1fr; }
+        .grid.list-view .app-card { flex-direction: row; align-items: center; }
+        .grid.list-view .app-icon-container { width: 70px; height: 70px; margin-bottom: 0; margin-right: 15px; flex-shrink: 0; }
+        .grid.list-view .app-text-content { flex-grow: 1; }
+        .grid.list-view .app-card button { width: auto; margin-top: 0; margin-left: 15px; }
+        #load-more-container { padding: 20px; text-align: center; }
+        #load-more-btn { background: var(--accent-green); border: none; padding: 12px 30px; color: white; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 16px; transition: background-color 0.3s; }
+        #load-more-btn.hidden { display: none; }
+        #load-more-btn:disabled { background-color: #555; cursor: not-allowed; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); justify-content: center; align-items: center; z-index: 12000; }
+        .modal-content { background: #222; padding: 20px; border-radius: 10px; text-align: left; width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto; }
+        .modal-content h2 { margin-bottom: 15px; text-align: center;}
+        .modal-content button { display: block; width: 100%; margin: 10px 0; padding: 10px; border: none; background: var(--accent-green); color: white; border-radius: 5px; font-size: 16px; cursor: pointer; }
+        .changelog-content h3 { color: var(--accent-green); margin-top: 20px; margin-bottom: 5px; }
+        .changelog-content ul { list-style-type: disc; padding-left: 20px; }
+        .changelog-content li { margin-bottom: 8px; }
+        #settings-modal { position: fixed; top: 0; right: -320px; width: 300px; height: 100%; background: #1c1c1c; z-index: 11000; box-shadow: -5px 0 15px rgba(0, 0, 0, 0.5); transition: right 0.4s ease-in-out; padding: 20px; overflow-y: auto; }
+        #settings-modal.open { right: 0; }
+        #settings-modal .settings-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        #settings-modal h2 { font-size: 24px; }
+        #settings-modal .close-btn { font-size: 30px; cursor: pointer; color: var(--text-secondary-dark); }
+        .setting-option { margin-bottom: 25px; }
+        .setting-option label { display: block; margin-bottom: 10px; font-weight: 600; }
+        .setting-option .label-switch-container { display: flex; justify-content: space-between; align-items: center; }
+        .theme-switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+        .theme-switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .4s; border-radius: 26px; }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked+.slider { background-color: var(--accent-green); }
+        input:checked+.slider:before { transform: translateX(24px); }
+        .layout-buttons button { background: #333; border: 1px solid #555; padding: 8px 15px; cursor: pointer; margin-right: 10px; border-radius: 5px; color: white; }
+        .layout-buttons button.active { background: var(--accent-green); border-color: var(--accent-green); }
+        body.light-mode .layout-buttons button { background: #e4e6eb; border-color: #ced0d4; color: #1c1c1e; }
+        body.light-mode .layout-buttons button.active { background: var(--accent-green); border-color: var(--accent-green); color: white; }
+        #sort-select, #language-select, #items-per-page-select { width: 100%; padding: 10px; background: #333; color: white; border: 1px solid #555; border-radius: 5px; font-family: 'Poppins', sans-serif; font-size: 14px; }
+        #sort-select:disabled { background: #2a2a2a; color: #777; cursor: not-allowed; }
+        body.light-mode #sort-select:disabled { background: #e9ecef; color: #adb5bd; }
+        .sort-note { font-size:12px; color: var(--text-secondary-dark); margin-top: 5px; }
+        .category-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+        .category-buttons button { background: #333; border: 1px solid #555; padding: 6px 12px; font-size: 13px; color: white; }
+        .category-buttons button.active { background: var(--accent-green); border-color: var(--accent-green); }
+        body.light-mode .category-buttons button { background: #e4e6eb; border-color: #ced0d4; color: #1c1c1e; }
+        body.light-mode .category-buttons button.active { background: var(--accent-green); border-color: var(--accent-green); color: white; }
+        .simple-button { width: 100%; padding: 10px; background: var(--accent-blue); border: none; color: white; border-radius: 5px; font-weight: 600; cursor: pointer; }
+        #reset-settings-btn { background: var(--accent-red); }
+        .about-section p { font-size: 14px; color: var(--text-secondary-dark); line-height: 1.6; }
+        #contact-owner-btn { width: 100%; padding: 12px; background: var(--accent-green); border: none; color: white; border-radius: 5px; font-size: 16px; cursor: pointer; font-weight: 600; }
+        #floating-settings-btn { position: fixed; bottom: 20px; right: 20px; background: var(--accent-green); color: white; border-radius: 50%; width: 55px; height: 55px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 9999; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); transition: transform 0.3s ease; -webkit-tap-highlight-color: transparent; }
+        #floating-settings-btn:hover { transform: scale(1.1); }
+        #floating-settings-btn:active { transform: rotate(360deg) scale(0.95); transition: transform 0.4s ease-in-out; }
+        #floating-settings-btn svg { width: 28px; height: 28px; fill: white; }
+        #popup-form { display: none; position: fixed; bottom: 90px; right: 20px; background: #1c1c1c; border-radius: 10px; padding: 20px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); z-index: 9998; width: 90%; max-width: 300px; flex-direction: column; animation: fadeInForm 0.3s ease; }
+        #popup-form input, #popup-form textarea { background: #333; border: 1px solid #444; padding: 10px; border-radius: 5px; margin-bottom: 10px; color: white; width: 100%; }
+        @keyframes fadeInForm { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        #offline-container { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); justify-content: center; align-items: center; z-index: 10000; backdrop-filter: blur(5px); }
+        .offline-box { background: #2c2c2c; padding: 30px 40px; border-radius: 12px; text-align: center; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5); max-width: 90%; width: 320px; }
+        .offline-box svg { width: 60px; height: 60px; margin-bottom: 20px; fill: #777; }
+        .offline-box h2 { font-size: 22px; margin-bottom: 10px; font-weight: 600; color: transparent; background-image: linear-gradient(90deg, #42a5f5, #66bb6a, #ffee58, #ef5350, #ab47bc, #42a5f5); background-size: 300% 100%; background-clip: text; -webkit-background-clip: text; animation: color-flow 5s linear infinite; }
+        @keyframes color-flow { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+        @keyframes animated-text-gradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .animated-text { background-image: linear-gradient(90deg, #ffffff, #f0ff00, #00ffea, #ff00f2, #ffffff); background-size: 250% auto; -webkit-background-clip: text; background-clip: text; color: transparent; animation: animated-text-gradient 3s linear infinite; font-weight: 700; }
+        .animated-text-loadmore { background-image: linear-gradient(90deg, #42a5f5, #66bb6a, #ffee58, #ef5350, #ab47bc, #42a5f5); background-size: 300% auto; -webkit-background-clip: text; background-clip: text; color: transparent; animation: animated-text-gradient 4s linear infinite; font-weight: 700; }
+        .not-found-container { grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; text-align: center; animation: fadeInUp 0.5s ease-out forwards; }
+        .not-found-container svg { width: 80px; height: 80px; margin-bottom: 20px; fill: var(--accent-green); }
+        .not-found-container h3 { font-size: 24px; font-weight: 600; margin-bottom: 10px; }
+        .not-found-container p { color: var(--text-secondary-dark); font-size: 15px; }
+        body.light-mode .not-found-container p { color: var(--text-secondary-light); }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="preloader-active">
+
+    <div id="preloader">
+        <img src="https://i.ibb.co/MyjL8DZk/IMG-20250502-151238-214.jpg" alt="Loading...">
+    </div>
+    
+    <div id="offline-container">
+        <div class="offline-box">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4c-1.48 0-2.85.43-4.01 1.17l1.46 1.46C10.21 6.23 11.08 6 12 6c3.04 0 5.5 2.46 5.5 5.5v.5H19c1.66 0 3 1.34 3 3 0 1.13-.64 2.11-1.56 2.62l1.45 1.45C23.16 18.16 24 16.68 24 15c0-2.64-2.05-4.78-4.65-4.96zM3 5.27l2.75 2.74C2.56 8.15 0 10.77 0 14c0 3.31 2.69 6 6 6h11.73l2 2L21 20.73 4.27 4 3 5.27zM7.73 10l8 8H6c-2.21 0-4-1.79-4-4s1.79-4 4-4h1.73z" /></svg>
+            <h2 data-translate-key="offlineTitle">You're Offline</h2>
+            <p data-translate-key="offlineMessage">Check your connection and try again.</p>
+        </div>
+    </div>
+    <header>
+        <img src="https://i.ibb.co/MyjL8DZk/IMG-20250502-151238-214.jpg" alt="Logo" class="logo">
+        <h2 class="site-title animated-text">Premium App Free</h2>
+        <div class="search-container">
+            <input type="text" class="search" data-translate-key="searchPlaceholder" placeholder="Search apps...">
+            <div class="search-icon">
+                <svg viewBox="0 0 24 24"><circle class="search-circle" cx="11" cy="11" r="8"></circle><line class="search-line1" x1="21" y1="21" x2="16.65" y2="16.65"></line><line class="close-line1" x1="8" y1="8" x2="14" y2="14"></line><line class="close-line2" x1="14" y1="8" x2="8" y2="14"></line></svg>
+            </div>
+        </div>
+        <a href="https://t.me/apps_pro_freee" class="telegram-link" target="_blank"><img src="https://i.ibb.co/844sJLWV/800px-Telegram-2019-Logo-svg.png" alt="Telegram"></a>
+    </header>
+    
+    <div class="grid" id="appGrid"></div>
+    
+    <div id="load-more-container">
+        <button id="load-more-btn" class="hidden"><span class="animated-text-loadmore" data-translate-key="loadMore">Load More</span></button>
+    </div>
+    
+    <div id="settings-modal">
+        <div class="settings-header">
+            <h2 data-translate-key="settingsTitle">Settings</h2>
+            <span class="close-btn" id="close-settings-btn">×</span>
+        </div>
+
+        <div class="setting-option">
+            <label data-translate-key="generalLabel">General</label>
+            <div class="label-switch-container">
+                <span data-translate-key="themeLabel">Theme</span>
+                <label class="theme-switch"><input type="checkbox" id="theme-toggle"><span class="slider"></span></label>
+            </div>
+        </div>
+        <div class="setting-option">
+            <label for="language-select" data-translate-key="languageLabel">Language</label>
+            <select id="language-select">
+                <option value="en">English</option><option value="bn">বাংলা</option><option value="hi">हिन्दी</option><option value="ar">العربية</option><option value="ur">اردو</option><option value="pt">Português</option>
+            </select>
+        </div>
+
+        <div class="setting-option">
+            <label data-translate-key="contentLabel">Content</label>
+            <div class="layout-buttons"><button id="grid-layout-btn" class="active" data-translate-key="gridBtn"><span>Grid</span></button><button id="list-layout-btn" data-translate-key="listBtn"><span>List</span></button></div>
+        </div>
+        <div class="setting-option" style="margin-top:-15px;">
+            <label for="items-per-page-select" data-translate-key="itemsPerPageLabel">Items Per Page</label>
+            <select id="items-per-page-select">
+                <option value="12">12</option>
+                <option value="24">24</option>
+                <option value="36">36</option>
+                <option value="48">48</option>
+            </select>
+        </div>
+        <div class="setting-option" style="margin-top:-15px;">
+             <div class="label-switch-container">
+                <span data-translate-key="infiniteScrollLabel">Infinite Scroll</span>
+                <label class="theme-switch"><input type="checkbox" id="infinite-scroll-toggle" checked><span class="slider"></span></label>
+            </div>
+        </div>
+
+        <div class="setting-option">
+            <label for="sort-select" data-translate-key="sortByLabel">Sort By</label>
+            <select id="sort-select">
+                <option value="default" data-translate-key="sortDefault">Default</option><option value="name-az" data-translate-key="sortNameAZ">Name (A-Z)</option><option value="name-za" data-translate-key="sortNameZA">Name (Z-A)</option><option value="size-lh" data-translate-key="sortSizeLH">Size (Low to High)</option><option value="size-hl" data-translate-key="sortSizeHL">Size (High to Low)</option>
+            </select>
+             <p class="sort-note" data-translate-key="sortNote">Sorting is available when searching or filtering.</p>
+        </div>
+        <div class="setting-option">
+            <label data-translate-key="filterByCategoryLabel">Filter by Category</label>
+            <div class="category-buttons" id="category-filter-buttons"></div>
+            <button id="clear-filters-btn" class="simple-button" data-translate-key="clearFiltersBtn" style="margin-top: 10px;"><span>Clear Filters</span></button>
+        </div>
+        
+        <div class="setting-option">
+            <label data-translate-key="otherLabel">Other</label>
+            <button id="contact-owner-btn" style="margin-bottom: 10px;"><span class="animated-text" data-translate-key="submitProblemBtn">Submit a Problem</span></button>
+            <button id="changelog-btn" class="simple-button"><span>Changelog</span></button>
+        </div>
+        <div class="setting-option">
+            <button id="reset-settings-btn" class="simple-button" data-translate-key="resetSettingsBtn"><span>Reset All Settings</span></button>
+        </div>
+        <div class="setting-option">
+            <label data-translate-key="aboutLabel">About</label>
+            <div class="about-section">
+                <p data-translate-key="aboutText"><strong>Premium Apps Free</strong><br>Version: 2.3<br>Your one-stop place for premium apps, made with ❤️ by Raj.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="popup">
+        <div class="modal-content" id="popup-content"></div>
+    </div>
+
+    <div id="floating-settings-btn"><svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.22C8.66,5.46,8.13,5.78,7.63,6.16L5.24,5.2c-0.22-0.08-0.47,0-0.59,0.22L2.73,8.74 c-0.11,0.2-0.06,0.47,0.12,0.61l2.03,1.58C4.82,11.36,4.8,11.68,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.41 c0.04,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.43,0.17,0.47,0.41l0.36-2.41c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0-0.59-0.22l1.92-3.32c0.11-0.2,0.06-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z" /></svg></div>
+    <div id="popup-form">
+        <input type="text" id="userName" data-translate-key="contactNamePlaceholder" placeholder="Your Name"><textarea id="userProblem" rows="4" data-translate-key="contactProblemPlaceholder" placeholder="Submit your problem..."></textarea><button id="send-to-owner-btn"><span class="animated-text" data-translate-key="sendToOwnerBtn">Send to Owner</span></button>
+    </div>
+    <footer style="background-color: #111; color: white; text-align: center; padding: 20px 10px; font-family: sans-serif;">
+        <p style="margin: 5px;">PremiumAppsFree Pvt Ltd</p>
+        <p style="margin: 5px;">Copyright ©️ clam 2026</p>
+        <p style="margin: 5px;">We respect copyright — no copyright content intended</p>
+        <p style="margin: 5px;"><a href="https://t.me/apps_pro_freee" target="_blank" style="color: #00acee; text-decoration: none;">Join our Telegram Channel</a></p>
+        <p style="margin-top: 20px; animation: fadeInFooter 2s infinite alternate;"><a href="#" target="_blank" style="color: #00ffcc; text-decoration: none; font-weight: bold;">Developer By 𓃠Ｒ𝔸𝐉𓃠</a></p>
+        <style> @keyframes fadeInFooter { from { opacity: 0.4; } to { opacity: 1; } } </style>
+    </footer>
+
+<script>
+    const translations = {
+        en: { settingsTitle: "Settings", generalLabel: "General", themeLabel: "Theme", languageLabel: "Language", contentLabel: "Content", gridBtn: "Grid", listBtn: "List", itemsPerPageLabel: "Items Per Page", infiniteScrollLabel: "Infinite Scroll", sortByLabel: "Sort By", sortDefault: "Default", sortNameAZ: "Name (A-Z)", sortNameZA: "Name (Z-A)", sortSizeLH: "Size (Low to High)", sortSizeHL: "Size (High to Low)", sortNote: "Sorting is available when searching or filtering.", filterByCategoryLabel: "Filter by Category", categoryAll: "All", otherLabel: "Other", submitProblemBtn: "Submit a Problem", changelogTitle: "Changelog", resetSettingsBtn: "Reset All Settings", aboutLabel: "About", aboutText: "<strong>Premium Apps Free</strong><br>Version: 2.3<br>Your one-stop place for premium apps, made with ❤️ by Raj.", downloadPopupTitle: "Download {appName}", downloadBtn: "Download", howToDownloadBtn: "How to Download", searchPlaceholder: "Search apps...", contactNamePlaceholder: "Your Name", contactProblemPlaceholder: "Submit your problem...", sendToOwnerBtn: "Send to Owner", offlineTitle: "You're Offline", offlineMessage: "Check your connection and try again.", version: "Version", size: "Size", notFoundTitle: "No Results Found", notFoundMessage: "Try using different keywords or check the selected category.", loadMore: "Load More", loading: "Loading...", loadingApps: "Loading Apps...", failedToLoad: "Failed to Load Apps", dbError: "Could not connect to the database. Please try again later.", clearFiltersBtn: "Clear Filters" },
+        bn: { settingsTitle: "সেটিংস", generalLabel: "সাধারণ", themeLabel: "থিম", languageLabel: "ভাষা", contentLabel: "কনটেন্ট", gridBtn: "গ্রিড", listBtn: "লিস্ট", itemsPerPageLabel: "প্রতি পেজে আইটেম", infiniteScrollLabel: "অসীম স্ক্রোল", sortByLabel: "সাজান", sortDefault: "ডিফল্ট", sortNameAZ: "নাম (A-Z)", sortNameZA: "নাম (Z-A)", sortSizeLH: "সাইজ (কম থেকে বেশি)", sortSizeHL: "সাইজ (বেশি থেকে কম)", sortNote: "শুধুমাত্র সার্চ বা ফিল্টার করার সময় সাজানো সম্ভব।", filterByCategoryLabel: "ক্যাটাগরি অনুযায়ী ফিল্টার", categoryAll: "সব", otherLabel: "অন্যান্য", submitProblemBtn: "সমস্যা জমা দিন", changelogTitle: "পরিবর্তনের তালিকা", resetSettingsBtn: "সমস্ত সেটিংস রিসেট করুন", aboutLabel: "সম্পর্কে", aboutText: "<strong>פריমিয়াম অ্যাপস ফ্রী</strong><br>ভার্সন: ২.৩<br>פריমিয়াম অ্যাপের জন্য আপনার ওয়ান-স্টপ ঠিকানা, ❤️ দিয়ে তৈরি করেছেন রাজ।", downloadPopupTitle: "{appName} ডাউনলোড করুন", downloadBtn: "ডাউনলোড", howToDownloadBtn: "কিভাবে ডাউনলোড করবেন", searchPlaceholder: "অ্যাপস খুঁজুন...", contactNamePlaceholder: "আপনার নাম", contactProblemPlaceholder: "আপনার সমস্যাটি লিখুন...", sendToOwnerBtn: "মালিককে পাঠান", offlineTitle: "আপনি অফলাইনে আছেন", offlineMessage: "আপনার ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।", version: "ভার্সন", size: "সাইজ", notFoundTitle: "কোনো ফলাফল পাওয়া যায়নি", notFoundMessage: "অন্য কোনো কীওয়ার্ড দিয়ে চেষ্টা করুন অথবা ক্যাটাগরি পরিবর্তন করে দেখুন।", loadMore: "আরও লোড করুন", loading: "লোড হচ্ছে...", loadingApps: "অ্যাপস লোড হচ্ছে...", failedToLoad: "অ্যাপস লোড করতে ব্যর্থ হয়েছে", dbError: "ডাটাবেসের সাথে সংযোগ করা যায়নি। অনুগ্রহ করে পরে আবার চেষ্টা করুন।", clearFiltersBtn: "ফিল্টার পরিষ্কার করুন" },
+    };
+
+    let currentLanguage, appsPerPage;
+    let allAppsData = [], displayedApps = [];
+    let lastLoadedKey = null;
+    let isLoading = false, isFullDataLoaded = false;
+    let searchDebounceTimeout, infiniteScrollObserver;
+
+    const firebaseConfig = { apiKey: "AIzaSyDklPQcjXfwKIaOoBHQiJbAIq4PrqR2cxs", authDomain: "premiumappsfree-ac666.firebaseapp.com", databaseURL: "https://premiumappsfree-ac666-default-rtdb.firebaseio.com", projectId: "premiumappsfree-ac666", storageBucket: "premiumappsfree-ac666.appspot.com", messagingSenderId: "406207439410", appId: "1:406207439410:web:b98131982dd86d13de122b" };
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const appsRef = database.ref('apps');
+
+    const getEl = id => document.getElementById(id);
+    const queryEl = selector => document.querySelector(selector);
+    const queryAll = selector => document.querySelectorAll(selector);
+
+    document.addEventListener('DOMContentLoaded', () => {
+        setupEventListeners();
+        loadInitialSettingsAndContent();
+    });
+
+    function loadInitialSettingsAndContent() {
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        const savedLayout = localStorage.getItem('layout') || 'grid';
+        appsPerPage = parseInt(localStorage.getItem('itemsPerPage'), 10) || 24;
+        const infiniteScrollEnabled = localStorage.getItem('infiniteScroll') !== 'false';
+        const savedLang = localStorage.getItem('language') || 'en';
+
+        getEl('theme-toggle').checked = savedTheme === 'light';
+        document.body.classList.toggle('light-mode', savedTheme === 'light');
+        getEl('appGrid').classList.toggle('list-view', savedLayout === 'list');
+        getEl('grid-layout-btn').classList.toggle('active', savedLayout === 'grid');
+        getEl('list-layout-btn').classList.toggle('active', savedLayout === 'list');
+        getEl('items-per-page-select').value = appsPerPage;
+        getEl('infinite-scroll-toggle').checked = infiniteScrollEnabled;
+        getEl('language-select').value = savedLang;
+        
+        updateAllUIText(savedLang);
+        generateCategoryButtons();
+        handleFilterOrSearch();
+    }
+    
+    function resetAndLoad() {
+        if (infiniteScrollObserver) infiniteScrollObserver.disconnect();
+        getEl('appGrid').innerHTML = '';
+        displayedApps = [], allAppsData = [], lastLoadedKey = null;
+        isLoading = false, isFullDataLoaded = false;
+        handleFilterOrSearch();
+    }
+
+    function loadAppsByPage() {
+        if (isLoading) return;
+        isLoading = true;
+        
+        const loadMoreBtn = getEl('load-more-btn');
+        if (loadMoreBtn && !getEl('infinite-scroll-toggle').checked) {
+            loadMoreBtn.disabled = true;
+            loadMoreBtn.querySelector('span').textContent = translations[currentLanguage].loading;
+        }
+
+        let query = appsRef.orderByKey().limitToFirst(appsPerPage);
+        if (lastLoadedKey) query = appsRef.orderByKey().startAfter(lastLoadedKey).limitToFirst(appsPerPage);
+
+        query.once('value')
+            .then(snapshot => {
+                if (!lastLoadedKey) document.body.classList.remove('preloader-active');
+                const data = snapshot.val();
+                if (!data || Object.keys(data).length === 0) {
+                    if (!lastLoadedKey) showNotFoundMessage();
+                    if (infiniteScrollObserver) infiniteScrollObserver.disconnect();
+                    if (loadMoreBtn) loadMoreBtn.classList.add('hidden');
+                    return;
+                }
+                const newApps = Object.entries(data).map(([key, value]) => ({...value, key}));
+                lastLoadedKey = newApps[newApps.length - 1].key;
+                renderApps(newApps, true);
+                setupLoadMore(newApps.length < appsPerPage);
+            })
+            .catch(handleFirebaseError)
+            .finally(() => {
+                isLoading = false;
+                if (loadMoreBtn) {
+                    loadMoreBtn.disabled = false;
+                    loadMoreBtn.querySelector('span').textContent = translations[currentLanguage].loadMore;
+                }
+            });
+    }
+
+    async function loadAllDataOnceAndFilter() {
+        if (isLoading) return;
+        isLoading = true;
+        showLoadingMessage();
+        try {
+            if (!isFullDataLoaded) {
+                const snapshot = await appsRef.once('value');
+                const data = snapshot.val();
+                if (data) { allAppsData = Object.values(data); isFullDataLoaded = true; }
+            }
+            applyFiltersAndDisplay();
+        } catch (error) { handleFirebaseError(error); } 
+        finally { isLoading = false; document.body.classList.remove('preloader-active'); }
+    }
+
+    function setupEventListeners() {
+        getEl('appGrid').addEventListener('click', function(e) {
+            const card = e.target.closest('.app-card');
+            if (!card) return;
+            const btn = e.target.closest('.download-card-btn');
+            const appId = parseInt(card.dataset.appId, 10);
+            const app = displayedApps.find(a => a.id === appId) || allAppsData.find(a => a.id === appId);
+            if (app && btn) showDownloadPopup(app);
+        });
+        getEl('items-per-page-select').addEventListener('change', e => { appsPerPage = parseInt(e.target.value, 10); localStorage.setItem('itemsPerPage', appsPerPage); resetAndLoad(); });
+        getEl('infinite-scroll-toggle').addEventListener('change', e => { localStorage.setItem('infiniteScroll', String(e.target.checked)); resetAndLoad(); });
+        getEl('language-select').addEventListener('change', e => { const lang = e.target.value; localStorage.setItem('language', lang); updateAllUIText(lang); generateCategoryButtons(); resetAndLoad(); });
+        getEl('changelog-btn').addEventListener('click', showChangelog);
+        queryEl('.search').addEventListener('input', () => { clearTimeout(searchDebounceTimeout); searchDebounceTimeout = setTimeout(resetAndLoad, 400); });
+        getEl('category-filter-buttons').addEventListener('click', (e) => { const button = e.target.closest('button'); if (button && !isLoading) { queryEl('#category-filter-buttons button.active')?.classList.remove('active'); button.classList.add('active'); localStorage.setItem('category', button.dataset.category); resetAndLoad(); } });
+        getEl('sort-select').addEventListener('change', () => { if (isFullDataLoaded) applyFiltersAndDisplay(); });
+        queryEl('.search-icon').addEventListener('click', (e) => { e.stopPropagation(); const header = queryEl('header'); const searchInput = queryEl('.search'); const isActive = header.classList.toggle('search-active'); if (isActive) { searchInput.focus(); } else { if (searchInput.value) { searchInput.value = ''; resetAndLoad(); } } });
+        getEl('load-more-btn').addEventListener('click', loadAppsByPage);
+        getEl('popup').onclick = function(e) { if (e.target.id === 'popup' || e.target.id === 'popup-content') { this.style.display = 'none'; } };
+        getEl('floating-settings-btn').addEventListener('click', () => { getEl('popup-form').style.display = 'none'; getEl('settings-modal').classList.add('open'); });
+        getEl('close-settings-btn').addEventListener('click', () => getEl('settings-modal').classList.remove('open'));
+        getEl('theme-toggle').addEventListener('change', () => { document.body.classList.toggle('light-mode'); localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark'); });
+        getEl('grid-layout-btn').addEventListener('click', () => { getEl('appGrid').classList.remove('list-view'); getEl('grid-layout-btn').classList.add('active'); getEl('list-layout-btn').classList.remove('active'); localStorage.setItem('layout', 'grid'); });
+        getEl('list-layout-btn').addEventListener('click', () => { getEl('appGrid').classList.add('list-view'); getEl('list-layout-btn').classList.add('active'); getEl('grid-layout-btn').classList.remove('active'); localStorage.setItem('layout', 'list'); });
+        getEl('contact-owner-btn').addEventListener('click', () => { getEl('settings-modal').classList.remove('open'); getEl('popup-form').style.display = 'flex'; });
+        getEl('send-to-owner-btn').addEventListener('click', sendProblemReport);
+        getEl('reset-settings-btn').addEventListener('click', () => { if (confirm("Are you sure you want to reset all settings?")) { localStorage.clear(); window.location.reload(); } });
+        getEl('clear-filters-btn').addEventListener('click', clearFilters);
+        updateOnlineStatus(); setInterval(updateOnlineStatus, 10000); window.addEventListener('online', updateOnlineStatus); window.addEventListener('offline', updateOnlineStatus);
+        function updateOnlineStatus() { getEl('offline-container').style.display = navigator.onLine ? 'none' : 'flex'; }
+    }
+
+    function clearFilters() {
+        queryEl('.search').value = '';
+        localStorage.setItem('category', 'all');
+        generateCategoryButtons();
+        getEl('sort-select').value = 'default';
+        getEl('settings-modal').classList.remove('open');
+        resetAndLoad();
+    }
+    
+    function handleFilterOrSearch() {
+        const searchTerm = queryEl('.search').value.toLowerCase();
+        const currentCategory = localStorage.getItem('category') || 'all';
+        const isFiltering = searchTerm || currentCategory !== 'all';
+
+        getEl('sort-select').disabled = !isFiltering;
+        if (infiniteScrollObserver) infiniteScrollObserver.disconnect();
+        getEl('load-more-btn').classList.add('hidden');
+
+        if (isFiltering) { if (isFullDataLoaded) applyFiltersAndDisplay(); else loadAllDataOnceAndFilter(); } 
+        else { getEl('sort-select').value = 'default'; loadAppsByPage(); }
+    }
+
+    function setupLoadMore(isLastPage) {
+        if (isLastPage) { if (infiniteScrollObserver) infiniteScrollObserver.disconnect(); return; }
+        const useInfiniteScroll = getEl('infinite-scroll-toggle').checked;
+        if (useInfiniteScroll) {
+            if (infiniteScrollObserver) infiniteScrollObserver.disconnect();
+            infiniteScrollObserver = new IntersectionObserver(entries => {
+                if (entries[0].isIntersecting && !isLoading) { loadAppsByPage(); }
+            }, { rootMargin: "200px" });
+            infiniteScrollObserver.observe(getEl('load-more-container'));
+        } else { getEl('load-more-btn').classList.remove('hidden'); }
+    }
+
+    function updateAllUIText(lang) {
+        currentLanguage = lang;
+        document.documentElement.lang = lang;
+        queryAll('[data-translate-key]').forEach(el => {
+            const key = el.dataset.translateKey;
+            const translation = translations[lang]?.[key];
+            if (translation) {
+                const span = el.querySelector('span');
+                if (el.tagName === 'BUTTON' && span && !el.classList.contains('download-card-btn')) { span.innerHTML = translation.replace(/{appName}/, ''); }
+                else if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') { el.placeholder = translation; }
+                else { el.innerHTML = translation.replace(/{appName}/, ''); }
+            }
+        });
+    }
+
+    function generateCategoryButtons() {
+        const categories = ["all", "Video Editor", "Player", "Social", "Tools", "Browser", "VPN", "Photo Editor"];
+        const container = getEl('category-filter-buttons');
+        const currentCategory = localStorage.getItem('category') || 'all';
+        container.innerHTML = categories.map(cat => {
+            const catLabel = cat === 'all' ? translations[currentLanguage].categoryAll : cat;
+            return `<button data-category="${cat}" class="${cat === currentCategory ? 'active' : ''}"><span>${catLabel}</span></button>`
+        }).join('');
+    }
+
+    function renderApps(apps, append = false) {
+        const appGrid = getEl('appGrid');
+        if (!append) appGrid.innerHTML = '';
+        const newHTML = apps.map(app =>
+            `<div class="app-card" data-app-id="${app.id}">
+                <div class="app-icon-container"><img src="${app.img}" alt="${app.name}" loading="lazy"></div>
+                <div class="app-text-content">
+                    <h3>${app.name}</h3>
+                    <div class="app-info">${translations[currentLanguage].version}: ${app.version} | ${translations[currentLanguage].size}: ${app.size}</div>
+                </div>
+                <button class="download-card-btn"><span class="animated-text">${translations[currentLanguage].downloadBtn}</span></button>
+            </div>`
+        ).join('');
+        appGrid.insertAdjacentHTML('beforeend', newHTML);
+        displayedApps = append ? displayedApps.concat(apps) : apps;
+    }
+
+    function applyFiltersAndDisplay() {
+        let filteredApps = [...allAppsData];
+        const searchTerm = queryEl('.search').value.toLowerCase();
+        const currentCategory = localStorage.getItem('category') || 'all';
+        if (currentCategory !== 'all') { filteredApps = filteredApps.filter(app => app.category === currentCategory); }
+        if (searchTerm) { filteredApps = filteredApps.filter(app => app.name.toLowerCase().includes(searchTerm)); }
+        switch (getEl('sort-select').value) {
+            case 'name-az': filteredApps.sort((a, b) => a.name.localeCompare(b.name)); break;
+            case 'name-za': filteredApps.sort((a, b) => b.name.localeCompare(a.name)); break;
+            case 'size-lh': filteredApps.sort((a, b) => (parseFloat(a.size) || 0) - (parseFloat(b.size) || 0)); break;
+            case 'size-hl': filteredApps.sort((a, b) => (parseFloat(b.size) || 0) - (parseFloat(a.size) || 0)); break;
+        }
+        renderApps(filteredApps, false);
+    }
+
+    function showDownloadPopup(app) {
+        const popup = getEl('popup');
+        const content = getEl('popup-content');
+        content.innerHTML = `<h2 id="popup-title">${translations[currentLanguage].downloadPopupTitle.replace('{appName}', `<strong>${app.name}</strong>`)}</h2><button id="download-btn"><span class="animated-text">${translations[currentLanguage].downloadBtn}</span></button><button id="howToDownloadBtn"><span class="animated-text">${translations[currentLanguage].howToDownloadBtn}</span></button><div id="vimeoPlayer" style="display: none; margin-top: 20px;"><iframe src="https://player.vimeo.com/video/1080856907" width="100%" height="360" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe></div>`;
+        popup.style.display = 'flex';
+        getEl('download-btn').onclick = () => window.open(app.link, '_blank');
+        getEl('howToDownloadBtn').onclick = () => { getEl('vimeoPlayer').style.display = getEl('vimeoPlayer').style.display === 'none' ? 'block' : 'none'; };
+    }
+
+    function showChangelog() {
+        const popup = getEl('popup');
+        const content = getEl('popup-content');
+        content.innerHTML = `<h2 data-translate-key="changelogTitle">${translations[currentLanguage].changelogTitle}</h2><div class="changelog-content"><h3>Version 2.3 (Latest)</h3><ul><li>Optimized initial page load time significantly.</li><li>The site is now usable within 3-4 seconds.</li></ul><h3>Version 2.2</h3><ul><li>Added new settings: Infinite Scroll, Items Per Page.</li><li>Added Changelog button.</li></ul></div>`;
+        popup.style.display = 'flex';
+    }
+
+    function sanitizeHTML(str) { const temp = document.createElement('div'); temp.textContent = str; return temp.innerHTML; }
+    
+    function sendProblemReport() {
+        if (!navigator.onLine) {
+            alert("You are offline. Please check your connection.");
+            return;
+        }
+        const sendBtn = getEl('send-to-owner-btn');
+        const name = sanitizeHTML(getEl('userName').value.trim());
+        const problem = sanitizeHTML(getEl('userProblem').value.trim());
+
+        if (name === '' || problem === '') {
+            alert("Please fill all fields!");
+            return;
+        }
+
+        sendBtn.disabled = true;
+        sendBtn.querySelector('span').textContent = "Sending...";
+
+        // আপনার EmailJS আইডিগুলো এখানে বসানো হয়েছে
+        const serviceID = 'service_0k8pv2k';
+        const templateID = 'template_7a828dh';
+        const publicKey = 'uDsbJyBv48dzXtexp';
+
+        const templateParams = {
+            name: name,
+            problem: problem,
+        };
+        
+        emailjs.init(publicKey);
+
+        emailjs.send(serviceID, templateID, templateParams)
+            .then(response => {
+                alert("Message sent successfully!");
+                console.log('SUCCESS!', response.status, response.text);
+                getEl('popup-form').style.display = "none";
+                getEl('userName').value = '';
+                getEl('userProblem').value = '';
+            }, err => {
+                alert("Failed to send message. Please try again later.");
+                console.log('FAILED...', err);
+            })
+            .finally(() => {
+                sendBtn.disabled = false;
+                sendBtn.querySelector('span').innerHTML = translations[currentLanguage].sendToOwnerBtn;
+            });
+    }
+    
+    function showLoadingMessage() { getEl('appGrid').innerHTML = `<p style="text-align:center; grid-column: 1 / -1; padding: 40px;">${translations[currentLanguage].loadingApps}</p>`; }
+    function handleFirebaseError(error) { console.error("Firebase read failed:", error); document.body.classList.remove('preloader-active'); getEl('appGrid').innerHTML = `<div style="text-align: center; grid-column: 1 / -1; padding: 40px; color: #ff6b6b;"><h3 data-translate-key="failedToLoad">${translations[currentLanguage].failedToLoad}</h3><p data-translate-key="dbError">${translations[currentLanguage].dbError}</p></div>`; }
+    function showNotFoundMessage() { getEl('appGrid').innerHTML = `<div class="not-found-container"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg><h3 class="animated-text" data-translate-key="notFoundTitle">${translations[currentLanguage].notFoundTitle}</h3><p data-translate-key="notFoundMessage">${translations[currentLanguage].notFoundMessage}</p></div>`; }
+</script>
+
+</body>
+</html>
