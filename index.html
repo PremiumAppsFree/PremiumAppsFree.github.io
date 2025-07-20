@@ -89,7 +89,7 @@
         .section-icon { color: var(--primary-accent-color); font-size: 28px; }
         .section-title { font-size: 20px; font-weight: 600; color: var(--text-color-primary); }
         
-        .popular-carousel { display: flex; gap: 20px; overflow-x: auto; padding: 10px 5px 20px 5px; scroll-snap-type: x mandatory; scroll-padding-left: 15px; scrollbar-width: none; -ms-overflow-style: none; margin-bottom: 20px; }
+        .popular-carousel { display: flex; gap: 20px; overflow-x: auto; padding: 10px 5px 20px 5px; scroll-snap-type: x mandatory; scroll-padding-left: 15px; scrollbar-width: none; -ms-overflow-style: none; margin-bottom: 20px; will-change: transform; -webkit-overflow-scrolling: touch; }
         .popular-carousel::-webkit-scrollbar { display: none; }
         .hot-card-item { flex: 0 0 280px; position: relative; cursor: pointer; display: flex; flex-direction: column; align-items: center; scroll-snap-align: start; margin-bottom: 20px; }
         .hot-card-item:hover .popular-card-base { transform: translateY(-8px); box-shadow: 0 15px 35px var(--shadow-color-medium); }
@@ -139,9 +139,17 @@
         .detail-title { font-size: 22px; font-weight: 600; color: var(--text-color-primary); }
         .detail-card { background: var(--surface-color); padding: 20px; border-radius: 16px; display: flex; gap: 20px; align-items: center; margin-bottom: 25px; }
         #detailAppImage { width: 80px; height: 80px; border-radius: 20px; object-fit: cover; flex-shrink: 0; background-color: #333; }
+        .detail-info-wrapper { flex-grow: 1; }
         #detailAppName { font-size: 20px; font-weight: 600; }
         #detailAppInfo { font-size: 14px; color: var(--text-color-secondary); margin: 2px 0 6px 0; }
         
+        .detail-stats { display: flex; align-items: center; gap: 16px; margin-top: 8px; font-size: 14px; color: var(--text-color-secondary); flex-wrap: wrap; }
+        .stat-item { display: flex; align-items: center; gap: 6px; }
+        .stat-item .material-icons { font-size: 20px; }
+        .stat-item-rating .material-icons { color: #fdd835; }
+        .stat-item-views .material-icons { color: var(--accent-blue); }
+        #detailAppRatingStars .material-icons { font-size: 20px; color: #fdd835; }
+
         .detail-actions { display: flex; flex-direction: column; gap: 12px; margin-top: 25px; }
         .btn { padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s ease; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; width: 100%; }
         .btn-primary { background: var(--primary-accent-color); color: var(--text-color-on-accent); }
@@ -236,9 +244,37 @@
         .item-card.is-visible, .hot-card-item.is-visible { opacity: 1; transform: scale(1); }
         @keyframes scale-up-fade-in { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
         .is-visible { animation: scale-up-fade-in 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+        
+        /* Improved Rating and Comment Section Styles */
+        .rating-section { margin-bottom: 25px; }
+        .rating-section .subtitle { text-align: left; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .rating-section .subtitle .material-icons { color: var(--primary-accent-color); }
+        #comment-form-container { background: var(--surface-color); padding: 20px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 2px 8px var(--shadow-color-light); }
+        .star-rating { display: flex; justify-content: center; margin-bottom: 20px; flex-direction: row-reverse; }
+        .star-rating .material-icons { font-size: 38px; color: var(--text-secondary-dark); cursor: pointer; transition: color 0.2s, transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .star-rating:hover .material-icons { color: #fdd835; }
+        .star-rating .material-icons:hover ~ .material-icons { color: var(--text-secondary-dark); }
+        .star-rating .material-icons.selected,
+        .star-rating .material-icons.selected ~ .material-icons { color: #fdd835; }
+        .star-rating .material-icons:hover { transform: scale(1.2); }
+        
+        #comment-form input, #comment-form textarea { width: 100%; background: #2c2c2c; border: 1px solid #444; padding: 12px; border-radius: 8px; margin-bottom: 12px; color: white; resize: vertical; transition: border-color 0.3s, box-shadow 0.3s; }
+        body.light-mode #comment-form input, body.light-mode #comment-form textarea { background: #eef2f7; color: #050505; border-color: #ced0d4; }
+        #comment-form input:focus, #comment-form textarea:focus { outline: none; border-color: var(--primary-accent-color); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-accent-color) 20%, transparent); }
+        #comment-form textarea { min-height: 100px; }
+        #submit-comment { width: 100%; }
+        
+        #reviews-list-container { margin-top: 20px; }
+        .comment-card { background: var(--surface-color); padding: 16px; border-radius: 12px; margin-bottom: 12px; box-shadow: 0 2px 8px var(--shadow-color-light); }
+        .comment-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .comment-author { font-weight: 600; color: var(--text-color-primary); }
+        .comment-rating .material-icons { font-size: 18px; color: #fdd835; vertical-align: bottom; }
+        .comment-body { color: var(--text-color-secondary); line-height: 1.6; }
+        .comment-date { font-size: 12px; color: var(--text-secondary-dark); margin-top: 12px; opacity: 0.7; text-align: right; }
 
         @media (max-width: 768px) {
             .detail-card { flex-direction: column; text-align: center; }
+            .detail-stats { justify-content: center; }
             .lightbox-prev { left: 5px; }
             .lightbox-next { right: 5px; }
             body[dir="rtl"] .lightbox-prev { right: 5px; left: auto; }
@@ -275,17 +311,13 @@
     
     <div id="mainContentWrapper">
         <div class="container">
-            <!-- Hot Items Section -->
             <div id="hotItemsSection" class="hidden">
                  <div class="section-header">
                     <span class="material-icons section-icon" style="color: #ff3d71;">whatshot</span>
                     <h2 class="section-title">Hot Items</h2>
                 </div>
-                <div id="hotItemsCarousel" class="popular-carousel">
-                    <!-- Hot items will be injected by JS -->
-                </div>
+                <div id="hotItemsCarousel" class="popular-carousel"></div>
             </div>
-
             <div id="categoryCarouselsContainer">
                 <p class="loading-message" data-translate-key="loadingApps">Loading apps...</p>
             </div>
@@ -293,9 +325,7 @@
                  <div class="section-header">
                     <h2 id="latest-section-title" class="section-title" data-translate-key="searchResults">Search Results</h2>
                 </div>
-                <div id="latestList" class="item-grid">
-                    <!-- Search results appear here -->
-                </div>
+                <div id="latestList" class="item-grid"></div>
             </div>
         </div>
     </div>
@@ -308,19 +338,16 @@
             </div>
             <div class="detail-card">
                 <img id="detailAppImage" src="" alt="Item Icon">
-                <div class="detail-info">
+                <div class="detail-info-wrapper">
                     <h3 id="detailAppName">Item Name</h3>
                     <p id="detailAppInfo">Version: 1.0 | Size: 0 MB</p>
+                    <div id="detailAppStats" class="detail-stats"></div>
                 </div>
             </div>
             
             <div class="detail-actions">
-                <a href="#" target="_blank" id="detailAppDownloadLink" class="btn btn-primary">
-                    <span class="material-icons">download</span><span>Download</span>
-                </a>
-                <a href="https://player.vimeo.com/video/1080856907" target="_blank" class="btn btn-secondary">
-                    <span class="material-icons">play_circle_outline</span><span>How to Download</span>
-                </a>
+                <a href="#" target="_blank" id="detailAppDownloadLink" class="btn btn-primary"><span class="material-icons">download</span><span>Download</span></a>
+                <a href="https://player.vimeo.com/video/1080856907" target="_blank" class="btn btn-secondary"><span class="material-icons">play_circle_outline</span><span>How to Download</span></a>
                 <a href="#" target="_blank" id="detailAppPlayStoreLink" class="btn btn-secondary hidden">
                     <img src="https://i.postimg.cc/Wbw73V2y/Picsart-25-07-13-10-48-29-353.png" class="btn-icon-img" alt="Google Play Store Icon">
                     <span>View on Play Store</span>
@@ -333,8 +360,29 @@
             </div>
             <div class="detail-section-content">
                 <h4 class="subtitle">About this item</h4>
-                <div id="detailAppDescContainer">
-                    <ul></ul>
+                <div id="detailAppDescContainer"><ul></ul></div>
+            </div>
+
+            <div class="rating-section">
+                <div id="comment-form-container">
+                     <h4 class="subtitle" style="text-align: center; margin-bottom: 10px;">Leave a Review</h4>
+                     <div class="star-rating" id="star-rating">
+                         <span class="material-icons" data-value="5">star_border</span>
+                         <span class="material-icons" data-value="4">star_border</span>
+                         <span class="material-icons" data-value="3">star_border</span>
+                         <span class="material-icons" data-value="2">star_border</span>
+                         <span class="material-icons" data-value="1">star_border</span>
+                     </div>
+                     <form id="comment-form">
+                         <input type="text" id="comment-name" placeholder="Your Name" required>
+                         <textarea id="comment-text" placeholder="Write your review..." required></textarea>
+                         <button type="submit" id="submit-comment" class="btn btn-primary">Submit Review</button>
+                     </form>
+                </div>
+
+                <div id="reviews-list-container">
+                    <h4 class="subtitle"><span class="material-icons">reviews</span><span>User Reviews</span></h4>
+                    <div id="comments-container"></div>
                 </div>
             </div>
         </div>
@@ -399,9 +447,11 @@
     };
 
     let allAppsData = [];
+    let appFirebaseKeyMap = {};
     let currentDetailApp = null, currentScreenshotIndex = 0;
     let searchDebounceTimeout, settingsObserver;
     let currentLanguage = 'en';
+    let currentRating = 0;
     const NEW_DURATION_MS = 3 * 24 * 60 * 60 * 1000;
 
     const firebaseConfig = {
@@ -417,7 +467,7 @@
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
     const appsRef = database.ref('apps');
-    
+    const reviewsRef = database.ref('reviews');
     const eventConfigRef = database.ref('eventConfig');
     const themesRef = database.ref('themes');
 
@@ -474,7 +524,13 @@
         try {
             const allAppsSnapshot = await appsRef.once('value');
             if (allAppsSnapshot.exists()) {
-                allAppsData = Object.values(allAppsSnapshot.val());
+                allAppsData = [];
+                appFirebaseKeyMap = {};
+                allAppsSnapshot.forEach(childSnapshot => {
+                    const appData = childSnapshot.val();
+                    allAppsData.push(appData);
+                    appFirebaseKeyMap[appData.id] = childSnapshot.key;
+                });
                 allAppsData.sort((a,b) => (b.addedTimestamp || 0) - (a.addedTimestamp || 0));
                 handleFilterOrSearch();
                 generateCategoryButtons();
@@ -524,7 +580,7 @@
         section.classList.remove('hidden');
 
         hotApps.forEach(app => {
-            const androidBadgeHTML = app.androidVersion ? `<div class="android-badge"><span class="material-icons">android</span> ${escapeHTML(app.androidVersion)}+</div>` : '';
+            const androidBadgeHTML = app.androidVersion ? `<div class="android-badge"><span class="material-icons">android</span> ${escapeHTML(app.androidVersion)}</div>` : '';
             let backgroundHTML = '';
             if (app.hotItemBackgroundUrl) {
                 backgroundHTML = `<img src="${escapeHTML(app.hotItemBackgroundUrl)}" alt="Hot Item Background">`;
@@ -581,11 +637,25 @@
         void detailSection.offsetWidth;
         detailSection.classList.add('active');
         window.scrollTo(0, 0);
+        
+        incrementViewCount(app.id);
 
         getEl('detailAppImage').src = escapeHTML(app.img);
         getEl('detailAppName').textContent = escapeHTML(app.name);
         getEl('detailAppInfo').textContent = `Version: ${app.version} | Size: ${app.size}`;
         getEl('detailAppDownloadLink').href = escapeHTML(app.link);
+        
+        const firebaseKey = appFirebaseKeyMap[app.id];
+        if (firebaseKey) {
+            database.ref('apps/' + firebaseKey).on('value', (snapshot) => {
+                const updatedApp = snapshot.val();
+                if (updatedApp) {
+                    currentDetailApp = updatedApp; 
+                    displayAppStats(updatedApp);
+                }
+            });
+        }
+        
         const playStoreLinkEl = getEl('detailAppPlayStoreLink');
         if (app.playStoreLink && app.playStoreLink.trim() !== '') {
             playStoreLinkEl.href = escapeHTML(app.playStoreLink);
@@ -619,13 +689,74 @@
                 }
             });
         } else { descContainer.innerHTML = `<li>No detailed description available.</li>`; }
+        
+        loadReviews(app.id);
+        getEl('comment-form').reset();
+        currentRating = 0;
+        updateStarDisplay();
+    }
+    
+    function displayAppStats(app) {
+        const statsContainer = getEl('detailAppStats');
+        const ratingCount = app.ratingCount || 0;
+        const averageRating = app.averageRating || 0;
+        
+        let ratingHTML = `<div class="stat-item stat-item-rating">`;
+        if (ratingCount > 0) {
+            ratingHTML += `
+                <span id="detailAppRatingStars">${generateStarIcons(averageRating)}</span>
+                <strong>${averageRating.toFixed(1)}</strong>
+                <span>(${ratingCount} ratings)</span>
+            `;
+        } else {
+            ratingHTML += `<span>No ratings yet</span>`;
+        }
+        ratingHTML += `</div>`;
+        
+        const viewsHTML = `
+            <div class="stat-item stat-item-views">
+                <span class="material-icons">visibility</span>
+                <span>${app.viewCount || 0} Views</span>
+            </div>
+        `;
+        statsContainer.innerHTML = ratingHTML + viewsHTML;
+    }
+
+    function generateStarIcons(rating) {
+        let stars = '';
+        for (let i = 1; i <= 5; i++) {
+            if (i <= rating) {
+                stars += '<span class="material-icons">star</span>';
+            } else if (i - 0.5 <= rating) {
+                stars += '<span class="material-icons">star_half</span>';
+            } else {
+                stars += '<span class="material-icons">star_border</span>';
+            }
+        }
+        return stars;
+    }
+
+    function incrementViewCount(appId) {
+        const firebaseKey = appFirebaseKeyMap[appId];
+        if (!firebaseKey) return;
+        const appNodeRef = database.ref('apps/' + firebaseKey + '/viewCount');
+        appNodeRef.transaction(currentViews => {
+            return (currentViews || 0) + 1;
+        });
     }
 
     function hideDetailSection() {
+        if (currentDetailApp) {
+            const firebaseKey = appFirebaseKeyMap[currentDetailApp.id];
+            if (firebaseKey) {
+                database.ref('apps/' + firebaseKey).off();
+            }
+            reviewsRef.orderByChild('appId').equalTo(currentDetailApp.id).off();
+        }
         getEl('mainContentWrapper').classList.remove('hidden');
         const detailSection = getEl('sectionDetail');
         detailSection.classList.remove('active');
-        detailSection.classList.add('hidden');
+        setTimeout(() => detailSection.classList.add('hidden'), 300);
     }
 
     function showLightbox(index) {
@@ -694,6 +825,142 @@
         getEl('changelog-btn').addEventListener('click', showChangelog);
         getEl('contact-owner-btn').addEventListener('click', () => { getEl('settings-modal').classList.remove('open'); getEl('popup-form').style.display = 'flex'; });
         getEl('send-to-owner-btn').addEventListener('click', sendToTelegram);
+        
+        getEl('star-rating').addEventListener('click', (e) => {
+            const star = e.target.closest('.material-icons');
+            if(star){
+                currentRating = parseInt(star.dataset.value);
+                updateStarDisplay();
+            }
+        });
+        getEl('comment-form').addEventListener('submit', handleReviewSubmit);
+    }
+    
+    function updateStarDisplay() {
+        queryAll('#star-rating .material-icons').forEach(star => {
+            star.classList.toggle('selected', parseInt(star.dataset.value) <= currentRating);
+            star.textContent = parseInt(star.dataset.value) <= currentRating ? 'star' : 'star_border';
+        });
+    }
+
+    // --- চূড়ান্ত সমাধান করা রিভিউ সাবমিট ফাংশন ---
+    async function handleReviewSubmit(e) {
+        e.preventDefault();
+        const commentText = getEl('comment-text').value.trim();
+        const commentName = getEl('comment-name').value.trim();
+        
+        if (currentRating === 0) {
+            alert('Please select a rating (1 to 5 stars).');
+            return;
+        }
+        if (!commentName || !commentText) {
+            alert('Please enter your name and write a review.');
+            return;
+        }
+
+        const submitButton = getEl('submit-comment');
+        submitButton.disabled = true;
+        submitButton.textContent = 'Submitting...';
+
+        const reviewData = {
+            appId: currentDetailApp.id,
+            name: commentName,
+            rating: currentRating,
+            comment: commentText,
+            timestamp: firebase.database.ServerValue.TIMESTAMP
+        };
+        
+        try {
+            // ধাপ ১: রিভিউ ডেটাবেজে যোগ করা
+            await reviewsRef.push(reviewData);
+            
+            // ধাপ ২: অ্যাপের সামগ্রিক রেটিং আপডেট করা
+            const transactionResult = await updateAggregateRating(currentDetailApp.id, currentRating);
+
+            // ধাপ ৩: ট্রানজ্যাকশন সফল হয়েছে কিনা তা নিশ্চিত করা
+            if (!transactionResult.committed) {
+                throw new Error("Could not find the app to update its rating. It might have been deleted.");
+            }
+            
+            // সব সফল হলে ব্যবহারকারীকে ধন্যবাদ জানানো
+            alert('Thank you for your review!');
+            getEl('comment-form').reset();
+            currentRating = 0;
+            updateStarDisplay();
+
+        } catch (error) {
+            // কোনো ধাপে সমস্যা হলে এরর দেখানো হবে
+            console.error("Error submitting review: ", error);
+            alert(`Failed to submit review. Please try again. Error: ${error.message}`);
+        } finally {
+            // সব শেষে বাটনটি আবার আগের মতো করা
+            submitButton.disabled = false;
+            submitButton.textContent = 'Submit Review';
+        }
+    }
+
+    // --- চূড়ান্ত সমাধান করা রেটিং আপডেট ফাংশন ---
+    function updateAggregateRating(appId, newRating) {
+        const firebaseKey = appFirebaseKeyMap[appId];
+        if (!firebaseKey) {
+            console.error("Could not find Firebase key for app ID:", appId);
+            return Promise.reject(new Error("App key not found."));
+        }
+        const appNodeRef = database.ref('apps/' + firebaseKey);
+        
+        return appNodeRef.transaction(app => {
+            if (app) { 
+                const currentRatingCount = app.ratingCount || 0;
+                const currentTotalRating = (app.averageRating || 0) * currentRatingCount;
+                
+                app.ratingCount = currentRatingCount + 1;
+                app.averageRating = (currentTotalRating + newRating) / app.ratingCount;
+                return app;
+            }
+            // যদি অ্যাপটি ডেটাবেজে না পাওয়া যায়, ট্রানজ্যাকশনটি বাতিল হয়ে যাবে
+            return undefined; 
+        });
+    }
+
+    function loadReviews(appId) {
+        const commentsContainer = getEl('comments-container');
+        commentsContainer.innerHTML = '<p>Loading reviews...</p>';
+        const query = reviewsRef.orderByChild('appId').equalTo(appId);
+        
+        query.on('value', (snapshot) => {
+            commentsContainer.innerHTML = '';
+            if (snapshot.exists()) {
+                const reviews = [];
+                snapshot.forEach(childSnapshot => {
+                    reviews.push(childSnapshot.val());
+                });
+
+                reviews.sort((a, b) => b.timestamp - a.timestamp);
+
+                reviews.forEach(review => {
+                    const commentEl = document.createElement('div');
+                    commentEl.className = 'comment-card';
+                    let starsHTML = '';
+                    for (let i = 0; i < review.rating; i++) {
+                        starsHTML += `<span class="material-icons">star</span>`;
+                    }
+                    commentEl.innerHTML = `
+                        <div class="comment-header">
+                            <strong class="comment-author">${escapeHTML(review.name || 'Anonymous')}</strong>
+                            <div class="comment-rating">${starsHTML}</div>
+                        </div>
+                        <p class="comment-body">${escapeHTML(review.comment)}</p>
+                        <p class="comment-date">${new Date(review.timestamp).toLocaleString()}</p>
+                    `;
+                    commentsContainer.appendChild(commentEl);
+                });
+            } else {
+                commentsContainer.innerHTML = '<p>No reviews yet. Be the first to write one!</p>';
+            }
+        }, (error) => {
+            console.error("Error loading reviews: ", error);
+            commentsContainer.innerHTML = '<p>Could not load reviews.</p>';
+        });
     }
 
     function generateCategoryButtons() {
@@ -734,27 +1001,17 @@
         sendBtn.disabled = true;
 
         try {
-            // Firebase থেকে টেলিগ্রাম কনফিগারেশন আনা হচ্ছে
             const configSnapshot = await database.ref('telegramConfig').once('value');
-            if (!configSnapshot.exists()) {
-                throw new Error("Telegram configuration not found. Please contact the administrator.");
-            }
-
+            if (!configSnapshot.exists()) { throw new Error("Telegram configuration not found. Please contact the administrator."); }
             const { botToken, chatId } = configSnapshot.val();
-            if (!botToken || !chatId) {
-                throw new Error("Invalid Telegram configuration. Please contact the administrator.");
-            }
-
+            if (!botToken || !chatId) { throw new Error("Invalid Telegram configuration. Please contact the administrator."); }
             const message = `Problem Report:\nName: ${name}\nProblem: ${problem}`;
-            
             const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ chat_id: chatId, text: message })
             });
-
             const data = await response.json();
-
             if (data.ok) { 
                 alert('Message sent successfully!'); 
                 getEl('popup-form').style.display = 'none'; 
