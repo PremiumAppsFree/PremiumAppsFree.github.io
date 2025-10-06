@@ -36,6 +36,16 @@
             --shadow-color-light: rgba(0, 0, 0, 0.2);
             --shadow-color-medium: rgba(0, 0, 0, 0.4);
             --font-body: 'Poppins', sans-serif;
+
+            /* RGB for ripple effect */
+            --text-color-primary-rgb: 224, 224, 224; /* for #e0e0e0 */
+            --ripple-color: rgba(var(--text-color-primary-rgb), 0.2);
+
+            /* RGB Animation Variables */
+            --logo-img-size: 40px; /* The actual image size */
+            --logo-white-border-size: 2px; /* Thickness of the white border around the image */
+            --logo-rgb-glow-size: 3px; /* Thickness of the RGB animated border */
+            --logo-wrapper-size: calc(var(--logo-img-size) + (2 * var(--logo-white-border-size)) + (2 * var(--logo-rgb-glow-size)));
         }
         
         body.light-mode {
@@ -46,13 +56,80 @@
             --border-color: #e2e8f0;
             --shadow-color-light: rgba(0, 0, 0, 0.05);
             --shadow-color-medium: rgba(0, 0, 0, 0.1);
+
+            /* RGB for ripple effect in light mode */
+            --text-color-primary-rgb: 28, 28, 30; /* for #1c1c1e */
+            --ripple-color: rgba(var(--text-color-primary-rgb), 0.08);
+        }
+
+        /* --- Scroll Fix: Prevents unwanted horizontal scrolling --- */
+        html, body {
+            overflow-x: hidden; 
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box; 
+            font-family: 'Poppins', sans-serif; 
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         html { scroll-behavior: smooth; }
-        body { background: var(--bg-color); color: var(--text-color-primary); transition: background 0.3s, color 0.3s; }
+        body { 
+            background: var(--bg-color); 
+            color: var(--text-color-primary); 
+            transition: background 0.3s, color 0.3s;
+            position: relative; /* For ripple effect container */
+        }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 15px; }
         
+        /* Ripple effect styles */
+        .ripple-effect {
+            position: absolute;
+            border-radius: 50%;
+            background-color: var(--ripple-color);
+            transform: scale(0);
+            animation: ripple-grow 0.6s ease-out forwards; /* Use forwards to keep last state */
+            pointer-events: none; /* Crucial for not intercepting clicks */
+            z-index: 9999; /* Ensure it's on top of most content */
+            opacity: 0;
+        }
+
+        @keyframes ripple-grow {
+            from { transform: scale(0); opacity: 1; }
+            to { transform: scale(2); opacity: 0; }
+        }
+
+        /* Toast Notification Styles */
+        .toast-notification {
+            position: fixed;
+            bottom: 80px; /* Above the footer/floating settings btn */
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s linear 0.3s; /* Delay visibility change */
+            min-width: 200px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .toast-notification.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+            transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s;
+        }
+
+        body.light-mode .toast-notification {
+            background-color: rgba(255, 255, 255, 0.9);
+            color: var(--text-primary-light);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
         #event-theme-html-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; overflow: hidden; }
 
         #preloader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 99999; background: var(--background-dark); display: flex; justify-content: center; align-items: center; opacity: 1; visibility: visible; transition: opacity 0.5s ease-out, visibility 0s 0.5s; }
@@ -63,11 +140,61 @@
 
         header { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: var(--header-dark); box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); position: sticky; top: 0; z-index: 100; }
         body.light-mode header { background: var(--header-light); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
-        .logo { height: 40px; width: 40px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
-        /* Removed Telegram Link CSS */
-        /* .telegram-link { display: flex; justify-content: center; align-items: center; width: 40px; height: 40px; border-radius: 50%; margin-left: 10px; background-color: #333; transition: background-color 0.3s; flex-shrink: 0; } */
-        /* body.light-mode .telegram-link { background-color: #f0f2f5; } */
-        /* .telegram-link img { height: 22px; } */
+        
+        /* New styles for RGB animation around logo */
+        .logo-link {
+            text-decoration: none;
+            color: inherit;
+            display: flex; /* Make the link a flex container to center the logo-wrapper */
+            align-items: center;
+            margin-right: 10px; /* Spacing for the link */
+            flex-shrink: 0;
+        }
+
+        .logo-wrapper {
+            position: relative;
+            width: var(--logo-wrapper-size);
+            height: var(--logo-wrapper-size);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; /* Hides parts of the rotating gradient outside the circle */
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+
+        .logo-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: conic-gradient(
+                #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000
+            );
+            border-radius: 50%;
+            animation: rgb-rotate 4s linear infinite;
+            filter: blur(2px); /* Soften the edges of the RGB effect */
+            z-index: 0;
+        }
+
+        @keyframes rgb-rotate {
+            to { transform: rotate(360deg); }
+        }
+
+        .logo {
+            width: var(--logo-img-size);
+            height: var(--logo-img-size);
+            border-radius: 50%;
+            object-fit: cover;
+            position: relative; /* Stacks it above ::before */
+            z-index: 1;
+            /* White border on the logo */
+            box-shadow: 0 0 0 var(--logo-white-border-size) white;
+        }
+
         .site-title {
             flex-grow: 1;
             flex-shrink: 1; /* Allow it to shrink */
@@ -81,29 +208,139 @@
             transform: scale(1);
             transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1), max-width 0.4s cubic-bezier(0.23, 1, 0.32, 1);
         }
-        header.search-active .site-title {
-            opacity: 0;
-            transform: scale(0.9);
-            max-width: 0; /* Visually collapse without layout shift */
-            margin: 0; /* Remove margin when collapsed */
-            overflow: hidden; /* Hide overflowing text */
-            pointer-events: none; /* Disable interaction */
+        
+        /* New Search Button */
+        .icon-button {
+            background: none;
+            border: none;
+            color: white; /* Or your preferred icon color */
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s ease;
+            flex-shrink: 0;
+            -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
         }
-        .search-container { position: relative; display: flex; align-items: center; width: 40px; height: 40px; background-color: var(--accent-green); border-radius: 25px; transition: width 0.4s cubic-bezier(0.23, 1, 0.32, 1), background-color 0.4s; flex-shrink: 0; }
-        header.search-active .search-container { width: 250px; background-color: #333; }
-        body.light-mode header.search-active .search-container { background-color: #e4e6eb; }
-        .search { width: 100%; height: 100%; border: none; background: transparent; color: white; padding: 0 45px 0 20px; font-size: 14px; outline: none; opacity: 0; transition: opacity 0.3s ease 0.1s; }
-        header.search-active .search { opacity: 1; }
-        body.light-mode .search { color: #050505; }
-        .search-icon { position: absolute; right: 0; top: 0; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 50%; }
-        .search-icon svg { width: 20px; height: 20px; stroke: #ffffff; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
-        header.search-active .search-icon svg { stroke: var(--text-secondary-dark); }
-        body.light-mode .search-icon svg { stroke: var(--text-secondary-dark); }
-        .search-icon .search-circle, .search-icon .search-line1, .search-icon .close-line1, .search-icon .close-line2 { transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1); }
-        .search-icon .close-line1, .search-icon .close-line2 { opacity: 0; stroke-dasharray: 20; stroke-dashoffset: 20; }
-        header.search-active .search-icon .search-circle { transform-origin: center; transform: scale(0.5); opacity: 0; }
-        header.search-active .search-icon .search-line1 { transform: rotate(45deg); opacity: 0; }
-        header.search-active .search-icon .close-line1, header.search-active .search-icon .close-line2 { opacity: 1; stroke-dashoffset: 0; }
+        .icon-button:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .icon-button svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--text-color-primary); /* Adjust color for theme */
+        }
+        body.light-mode .icon-button svg {
+            stroke: var(--text-primary-light);
+        }
+
+        /* Full Screen Search Overlay */
+        .full-screen-search-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-color); /* Inherit main background */
+            z-index: 2000; /* Higher than header */
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-100%); /* Start off-screen above */
+            transition: opacity 0.4s ease-out, transform 0.4s ease-out, visibility 0s 0.4s;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .full-screen-search-overlay.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            transition: opacity 0.4s ease-out, transform 0.4s ease-out, visibility 0s 0s;
+        }
+
+        .full-screen-search-overlay .search-header {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            background: var(--header-dark); /* Match header background */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        body.light-mode .full-screen-search-overlay .search-header {
+            background: var(--header-light);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .full-screen-search-overlay .btn-back {
+            margin-right: 15px;
+            font-size: 24px;
+            color: var(--text-color-primary);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .full-screen-search-overlay .btn-back:hover {
+             background-color: rgba(var(--text-color-primary-rgb), 0.1);
+        }
+        body[dir="rtl"] .full-screen-search-overlay .btn-back {
+            margin-right: 0;
+            margin-left: 15px;
+        }
+
+        #fullScreenSearchInput {
+            flex-grow: 1;
+            border: none;
+            background: transparent;
+            color: var(--text-color-primary);
+            padding: 8px 10px;
+            font-size: 16px;
+            outline: none;
+            border-bottom: 2px solid var(--primary-accent-color);
+            transition: border-color 0.3s;
+        }
+        #fullScreenSearchInput::placeholder {
+            color: var(--text-color-secondary);
+        }
+        #fullScreenSearchInput:focus {
+            border-color: var(--accent-blue);
+        }
+
+        .clear-search-btn {
+            background: none;
+            border: none;
+            color: var(--text-color-secondary);
+            cursor: pointer;
+            font-size: 24px;
+            padding: 0 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .clear-search-btn.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .full-screen-search-overlay .container {
+            flex-grow: 1;
+            padding-top: 20px;
+        }
 
         .section-header { display: flex; align-items: center; gap: 12px; margin: 28px 0 16px 0; }
         .section-icon { color: var(--primary-accent-color); font-size: 28px; }
@@ -260,6 +497,12 @@
         body[dir="rtl"] #settings-modal { right: auto; left: -320px; transition: left 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); box-shadow: 5px 0 15px rgba(0,0,0,0.5); }
         body[dir="rtl"] #settings-modal.open { left: 0; }
         body[dir="rtl"] #floating-settings-btn { right: auto; left: 20px; }
+        
+        /* RTL adjustments for the logo link margin */
+        body[dir="rtl"] .logo-link {
+            margin-left: 10px;
+            margin-right: 0;
+        }
 
         .item-card, .hot-card-item { -webkit-tap-highlight-color: transparent; tap-highlight-color: transparent; opacity: 0; transform: scale(0.95); transition: opacity 0.5s ease-out, transform 0.5s ease-out; }
         .item-card.is-visible, .hot-card-item.is-visible { opacity: 1; transform: scale(1); }
@@ -319,15 +562,19 @@
     <div id="preloader"><img src="https://i.ibb.co/MyjL8DZk/IMG-20250502-151238-214.jpg" alt="Loading..."></div>
     
     <header>
-        <img src="https://i.ibb.co/MyjL8DZk/IMG-20250502-151238-214.jpg" alt="Logo" class="logo">
-        <h2 class="site-title animated-text">Premium App Free</h2>
-        <div class="search-container">
-            <input type="text" class="search" data-translate-key="searchPlaceholder" placeholder="Search apps...">
-            <div class="search-icon">
-                <svg viewBox="0 0 24 24"><circle class="search-circle" cx="11" cy="11" r="8"></circle><line class="search-line1" x1="21" y1="21" x2="16.65" y2="16.65"></line><line class="close-line1" x1="8" y1="8" x2="14" y2="14"></line><line class="close-line2" x1="14" y1="8" x2="8" y2="14"></line></svg>
+        <a href="https://t.me/+D4b-FK6OG6swOTI1" target="_blank" class="logo-link">
+            <div class="logo-wrapper">
+                <img src="https://i.ibb.co/MyjL8DZk/IMG-20250502-151238-214.jpg" alt="Logo" class="logo">
             </div>
-        </div>
-        <!-- Telegram Link Removed as requested -->
+        </a>
+        <h2 class="site-title animated-text">Premium App Free</h2>
+        <!-- New Search Button -->
+        <button id="open-full-screen-search" class="icon-button">
+            <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+        </button>
     </header>
     
     <div id="mainContentWrapper">
@@ -347,6 +594,22 @@
                     <h2 id="latest-section-title" class="section-title" data-translate-key="searchResults">Search Results</h2>
                 </div>
                 <div id="latestList" class="item-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Full Screen Search Overlay -->
+    <div id="fullScreenSearchOverlay" class="full-screen-search-overlay">
+        <div class="search-header">
+            <button class="btn-back" id="close-full-screen-search"><span class="material-icons">arrow_back</span></button>
+            <input type="text" id="fullScreenSearchInput" data-translate-key="searchPlaceholder" placeholder="Search apps...">
+            <button class="clear-search-btn" id="clear-full-screen-search">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+        <div class="container">
+            <div id="fullScreenSearchResults" class="item-grid">
+                <p class="loading-message" data-translate-key="typeToSearch">Type to search...</p>
             </div>
         </div>
     </div>
@@ -431,7 +694,7 @@
                 <option value="bn">বাংলা (Bengali)</option>
                 <option value="hi">हिन्दी (Hindi)</option>
                 <option value="ar">العربية (Arabic)</option>
-                <option value="ur">اردو (Urdu)</option>
+                <option value="ur">اردো (Urdu)</option>
                 <option value="fa">فارسی (Persian)</option>
                 <option value="pt">Português (Portuguese)</option>
                 <option value="ml">മലയാളം (Malayalam)</option>
@@ -461,10 +724,13 @@
         <style> @keyframes fadeInFooter { from { opacity: 0.4; } to { opacity: 1; } } </style>
     </footer>
 
+    <!-- Toast Notification HTML -->
+    <div id="toast-notification" class="toast-notification"></div>
+
 <script>
     const translations = {
-        en: { settingsTitle: "Settings", themeLabel: "<i class='material-icons'>brightness_6</i> Day/Night Mode", languageLabel: "<i class='material-icons'>language</i> Choose Language", itemsPerPageLabel: "<i class='material-icons'>view_list</i> Apps Per Page", infiniteScrollLabel: "<i class='material-icons'>swipe_down</i> Infinite Scroll", sortByLabel: "<i class='material-icons'>sort_by_alpha</i> Sort Results By", sortNote: "Sorting is only active for search/filter results.", filterByCategoryLabel: "<i class='material-icons'>filter_list</i> Filter by Category", otherLabel: "<i class='material-icons'>more_horiz</i> Other Options", submitProblemBtn: "Submit a Problem", resetSettingsBtn: "<span><i class='material-icons' style='font-size: 16px; margin-right: 5px;'>delete_sweep</i> Reset All Settings</span>", searchPlaceholder: "Search apps...", loadingApps: "Loading apps...", searchResults: "Search Results", notFoundTitle: "No Results Found", clearFiltersBtn: "Clear Filters", changelogTitle: "Changelog", categoryAll: "All" },
-        bn: { settingsTitle: "সেটিংস", themeLabel: "<i class='material-icons'>brightness_6</i> দিন/রাত মোড", languageLabel: "<i class='material-icons'>language</i> ভাষা পরিবর্তন করুন", itemsPerPageLabel: "<i class='material-icons'>view_list</i> প্রতি পেজে অ্যাপ", infiniteScrollLabel: "<i class='material-icons'>swipe_down</i> অসীম স্ক্রোল", sortByLabel: "<i class='material-icons'>sort_by_alpha</i> ফলাফল সাজান", sortNote: "শুধুমাত্র সার্চ বা ফিল্টার করার সময় সাজানো সম্ভব।", filterByCategoryLabel: "<i class='material-icons'>filter_list</i> ক্যাটেগরি অনুযায়ী ফিল্টার", otherLabel: "<i class='material-icons'>more_horiz</i> অন্যান্য অপশন", submitProblemBtn: "সমস্যা জমা দিন", resetSettingsBtn: "<span><i class='material-icons' style='font-size: 16px; margin-right: 5px;'>delete_sweep</i> সব সেটিংস রিসেট করুন</span>", searchPlaceholder: "অ্যাপস খুঁজুন...", loadingApps: "অ্যাপস লোড হচ্ছে...", searchResults: "অনুসন্ধানের ফলাফল", notFoundTitle: "কোনো ফলাফল পাওয়া যায়নি", clearFiltersBtn: "ফিল্টার পরিষ্কার করুন", changelogTitle: "পরিবর্তনের তালিকা", categoryAll: "সব" },
+        en: { settingsTitle: "Settings", themeLabel: "<i class='material-icons'>brightness_6</i> Day/Night Mode", languageLabel: "<i class='material-icons'>language</i> Choose Language", itemsPerPageLabel: "<i class='material-icons'>view_list</i> Apps Per Page", infiniteScrollLabel: "<i class='material-icons'>swipe_down</i> Infinite Scroll", sortByLabel: "<i class='material-icons'>sort_by_alpha</i> Sort Results By", sortNote: "Sorting is only active for search/filter results.", filterByCategoryLabel: "<i class='material-icons'>filter_list</i> Filter by Category", otherLabel: "<i class='material-icons'>more_horiz</i> Other Options", submitProblemBtn: "Submit a Problem", resetSettingsBtn: "<span><i class='material-icons' style='font-size: 16px; margin-right: 5px;'>delete_sweep</i> Reset All Settings</span>", searchPlaceholder: "Search apps...", loadingApps: "Loading apps...", searchResults: "Search Results", notFoundTitle: "No Results Found", clearFiltersBtn: "Clear Filters", changelogTitle: "Changelog", categoryAll: "All", typeToSearch: "Type to search...", appDetailsLoaded: "App details loaded!" },
+        bn: { settingsTitle: "সেটিংস", themeLabel: "<i class='material-icons'>brightness_6</i> দিন/রাত মোড", languageLabel: "<i class='material-icons'>language</i> ভাষা পরিবর্তন করুন", itemsPerPageLabel: "<i class='material-icons'>view_list</i> প্রতি পেজে অ্যাপ", infiniteScrollLabel: "<i class='material-icons'>swipe_down</i> অসীম স্ক্রোল", sortByLabel: "<i class='material-icons'>sort_by_alpha</i> ফলাফল সাজান", sortNote: "শুধুমাত্র সার্চ বা ফিল্টার করার সময় সাজানো সম্ভব।", filterByCategoryLabel: "<i class='material-icons'>filter_list</i> ক্যাটেগরি অনুযায়ী ফিল্টার", otherLabel: "<i class='material-icons'>more_horiz</i> অন্যান্য অপশন", submitProblemBtn: "সমস্যা জমা দিন", resetSettingsBtn: "<span><i class='material-icons' style='font-size: 16px; margin-right: 5px;'>delete_sweep</i> সব সেটিংস রিসেট করুন</span>", searchPlaceholder: "অ্যাপস খুঁজুন...", loadingApps: "অ্যাপস লোড হচ্ছে...", searchResults: "অনুসন্ধানের ফলাফল", notFoundTitle: "কোনো ফলাফল পাওয়া যায়নি", clearFiltersBtn: "ফিল্টার পরিষ্কার করুন", changelogTitle: "পরিবর্তনের তালিকা", categoryAll: "সব", typeToSearch: "অনুসন্ধানের জন্য টাইপ করুন...", appDetailsLoaded: "অ্যাপের বিস্তারিত তথ্য লোড হয়েছে!" },
     };
 
     let allAppsData = [];
@@ -474,6 +740,7 @@
     let currentLanguage = 'en';
     let currentRating = 0;
     const NEW_DURATION_MS = 3 * 24 * 60 * 60 * 1000;
+    let toastTimeout; // For managing toast notifications
 
     const firebaseConfig = {
         apiKey: "AIzaSyDklPQcjXfwKIaOoBHQiJbAIq4PrqR2cxs",
@@ -496,15 +763,86 @@
     const queryEl = selector => document.querySelector(selector);
     const queryAll = selector => document.querySelectorAll(selector);
 
+    // New search elements
+    const openFullScreenSearchBtn = getEl('open-full-screen-search');
+    const closeFullScreenSearchBtn = getEl('close-full-screen-search');
+    const fullScreenSearchOverlay = getEl('fullScreenSearchOverlay');
+    const fullScreenSearchInput = getEl('fullScreenSearchInput');
+    const fullScreenSearchResultsContainer = getEl('fullScreenSearchResults');
+    const clearFullScreenSearchBtn = getEl('clear-full-screen-search');
+    const toastNotificationEl = getEl('toast-notification');
+
+
     document.addEventListener('DOMContentLoaded', () => {
         loadInitialSettings();
         setupEventListeners();
+        setupRippleEffect(); // Setup the ripple effect
         startFloatingHearts();
         setupSettingsAnimation();
         loadAllData();
         setupScrollAnimations();
         initializeThemeEngine();
+        handleFilterOrSearch(); // Initial render of main content
     });
+
+    // Function to handle ripple effect
+    function setupRippleEffect() {
+        document.body.addEventListener('click', function(e) {
+            // Check if the clicked element is an interactive element (button, a, input, textarea, select, or has a specific class like 'no-ripple')
+            // or if it's already a ripple.
+            if (e.target.closest('button, a, input, textarea, select, .no-ripple, .icon-button, .btn-back, .logo-link, .hot-card-item, .item-card, .popular-carousel, .ripple-effect') || 
+                e.target.tagName === 'LABEL' || (e.target.tagName === 'SPAN' && e.target.closest('.star-rating'))) {
+                return; // Do not apply ripple to interactive elements or specific excluded elements
+            }
+
+            const ripple = document.createElement('span');
+            ripple.classList.add('ripple-effect');
+            document.body.appendChild(ripple);
+
+            // Calculate size based on the largest dimension of the window for a full spread
+            const size = Math.max(window.innerWidth, window.innerHeight);
+            
+            // Get the bounding rectangle of the body to calculate position relative to it
+            const rect = document.body.getBoundingClientRect();
+            
+            // Calculate ripple position relative to the document.body's top-left corner
+            // Subtract half the ripple size to center it on the click point
+            const x = e.clientX - rect.left - (size / 2);
+            const y = e.clientY - rect.top - (size / 2);
+
+            ripple.style.width = ripple.style.height = `${size}px`;
+            ripple.style.left = `${x}px`;
+            ripple.style.top = `${y}px`;
+
+            // Remove ripple after animation
+            ripple.addEventListener('animationend', () => {
+                ripple.remove();
+            });
+        });
+    }
+
+    // Function to show toast notification
+    function showToast(message) {
+        if (toastTimeout) {
+            clearTimeout(toastTimeout);
+            toastNotificationEl.classList.remove('show');
+            // Give a small delay to allow the removal animation to start before new content/show
+            setTimeout(() => {
+                toastNotificationEl.textContent = message;
+                toastNotificationEl.classList.add('show');
+                toastTimeout = setTimeout(() => {
+                    toastNotificationEl.classList.remove('show');
+                }, 2500); // Hide after 2.5 seconds
+            }, 300); // Match CSS transition duration for hiding
+        } else {
+            toastNotificationEl.textContent = message;
+            toastNotificationEl.classList.add('show');
+            toastTimeout = setTimeout(() => {
+                toastNotificationEl.classList.remove('show');
+            }, 2500); // Hide after 2.5 seconds
+        }
+    }
+
 
     function applyEventTheme(theme) {
         removeEventTheme(); 
@@ -553,7 +891,7 @@
                     appFirebaseKeyMap[appData.id] = childSnapshot.key;
                 });
                 allAppsData.sort((a,b) => (b.addedTimestamp || 0) - (a.addedTimestamp || 0));
-                handleFilterOrSearch();
+                handleFilterOrSearch(); // Render main page after loading data
                 generateCategoryButtons();
             } else {
                 getEl('categoryCarouselsContainer').innerHTML = `<p class="loading-message">No apps found.</p>`;
@@ -565,28 +903,53 @@
         finally { document.body.classList.remove('preloader-active'); }
     }
     
+    // This function now solely manages the visibility and content of the main page sections
     function handleFilterOrSearch() {
-        const searchTerm = queryEl('.search').value.toLowerCase();
+        // If the full-screen search is active, do not interfere with the main content.
+        if (fullScreenSearchOverlay.classList.contains('active')) {
+            return;
+        }
+
         const currentCategory = localStorage.getItem('category') || 'all';
-        const isFiltering = searchTerm || currentCategory !== 'all';
+        const isFiltering = currentCategory !== 'all';
         getEl('sort-select').disabled = !isFiltering;
+
         const hotItemsSection = getEl('hotItemsSection');
         const carouselsContainer = getEl('categoryCarouselsContainer');
         const latestGridSection = getEl('latestSection');
+
         if (isFiltering) {
             hotItemsSection.classList.add('hidden');
             carouselsContainer.classList.add('hidden');
             latestGridSection.classList.remove('hidden');
-            applyFiltersAndDisplay();
+            applyMainPageFilters();
         } else {
             getEl('sort-select').value = 'default';
             latestGridSection.classList.add('hidden');
             hotItemsSection.classList.remove('hidden');
-            carouselsContainer.classList.remove('hidden');
+            carouselsContainer.classList.remove('hidden'); // Ensure carousels are visible when no category filter
             renderHotItems(allAppsData);
             renderCategoryCarousels(allAppsData);
         }
     }
+
+    // New function to apply filters only for the main page's "Latest Section"
+    function applyMainPageFilters() {
+        let filteredApps = [...allAppsData];
+        const currentCategory = localStorage.getItem('category') || 'all';
+        
+        if (currentCategory !== 'all') { filteredApps = filteredApps.filter(app => app.category === currentCategory); }
+        
+        switch (getEl('sort-select').value) {
+            case 'name-az': filteredApps.sort((a, b) => a.name.localeCompare(b.name)); break;
+            case 'name-za': filteredApps.sort((a, b) => b.name.localeCompare(a.name)); break;
+        }
+
+        const gridContainer = getEl('latestList');
+        gridContainer.innerHTML = filteredApps.length > 0 ? filteredApps.map(app => createAppCardHTML(app)).join('') : `<div class="not-found-container"><h3 data-translate-key="notFoundTitle">${translations[currentLanguage]?.notFoundTitle || 'No Results Found'}</h3></div>`;
+        gridContainer.querySelectorAll('.item-card').forEach(card => intersectionObserver.observe(card));
+    }
+
 
     function renderHotItems(apps) {
         const container = getEl('hotItemsCarousel');
@@ -611,6 +974,7 @@
             const cardHTML = `<div class="hot-card-item" data-app-id="${app.id}"><div class="popular-card-base"><div class="popular-card-abstract-bg">${backgroundHTML}</div>${androidBadgeHTML}<div class="popular-app-logo-wrapper"><img src="${escapeHTML(app.img)}" class="popular-app-logo" alt="${escapeHTML(app.name)} Logo" onerror="this.src='https://i.ibb.co/MyjL8DZk/IMG-20250502-151238-214.jpg'"></div></div><h3 class="popular-card-app-name">${escapeHTML(app.name)}</h3></div>`;
             container.insertAdjacentHTML('beforeend', cardHTML);
         });
+        container.querySelectorAll('.hot-card-item').forEach(card => intersectionObserver.observe(card));
     }
 
     function renderCategoryCarousels(apps) {
@@ -625,20 +989,7 @@
         Object.entries(categoryMap).sort(([a], [b]) => a.localeCompare(b)).forEach(([category, appsInCategory]) => {
             container.insertAdjacentHTML('beforeend', `<div class="category-section"><div class="section-header"><h2 class="section-title">${escapeHTML(category)}</h2></div><div class="category-item-carousel">${appsInCategory.map(app => createAppCardHTML(app)).join('')}</div></div>`);
         });
-    }
-
-    function applyFiltersAndDisplay() {
-        let filteredApps = [...allAppsData];
-        const searchTerm = queryEl('.search').value.toLowerCase();
-        const currentCategory = localStorage.getItem('category') || 'all';
-        if (currentCategory !== 'all') { filteredApps = filteredApps.filter(app => app.category === currentCategory); }
-        if (searchTerm) { filteredApps = filteredApps.filter(app => app.name.toLowerCase().includes(searchTerm)); }
-        switch (getEl('sort-select').value) {
-            case 'name-az': filteredApps.sort((a, b) => a.name.localeCompare(b.name)); break;
-            case 'name-za': filteredApps.sort((a, b) => b.name.localeCompare(a.name)); break;
-        }
-        const gridContainer = getEl('latestList');
-        gridContainer.innerHTML = filteredApps.length > 0 ? filteredApps.map(app => createAppCardHTML(app)).join('') : `<div class="not-found-container"><h3 data-translate-key="notFoundTitle">No Results Found</h3></div>`;
+        container.querySelectorAll('.item-card').forEach(card => intersectionObserver.observe(card));
     }
     
     function isNew(app) {
@@ -650,9 +1001,35 @@
         return `<div class="item-card" data-app-id="${app.id}">${newTagHTML}<div class="item-card-icon-container"><img src="${escapeHTML(app.img)}" class="item-card-icon" alt="${escapeHTML(app.name)} icon" onerror="this.src='https://i.ibb.co/MyjL8DZk/IMG-20250502-151238-214.jpg'"></div><div class="item-card-title">${escapeHTML(app.name)}</div><div class="item-card-info"><span>v${app.version}</span><span>${app.size}</span></div></div>`;
     }
 
+    // New function for full-screen search results
+    function applyFullScreenSearch() {
+        const searchTerm = fullScreenSearchInput.value.toLowerCase();
+        let filteredApps = [...allAppsData];
+
+        if (searchTerm) {
+            filteredApps = filteredApps.filter(app => app.name.toLowerCase().includes(searchTerm));
+        }
+
+        switch (getEl('sort-select').value) {
+            case 'name-az': filteredApps.sort((a, b) => a.name.localeCompare(b.name)); break;
+            case 'name-za': filteredApps.sort((a, b) => b.name.localeCompare(a.name)); break;
+        }
+
+        if (filteredApps.length > 0) {
+            fullScreenSearchResultsContainer.innerHTML = filteredApps.map(app => createAppCardHTML(app)).join('');
+        } else {
+            fullScreenSearchResultsContainer.innerHTML = `<div class="not-found-container"><h3 data-translate-key="notFoundTitle">${translations[currentLanguage]?.notFoundTitle || 'No Results Found'}</h3></div>`;
+        }
+
+        // Re-observe newly added cards for animation in the search overlay
+        fullScreenSearchResultsContainer.querySelectorAll('.item-card').forEach(card => intersectionObserver.observe(card));
+    }
+
     function showItemDetail(app) {
         currentDetailApp = app;
         getEl('mainContentWrapper').classList.add('hidden');
+        fullScreenSearchOverlay.classList.remove('active'); // Hide search overlay if it was open
+
         const detailSection = getEl('sectionDetail');
         detailSection.classList.remove('hidden', 'active');
         void detailSection.offsetWidth;
@@ -715,6 +1092,9 @@
         getEl('comment-form').reset();
         currentRating = 0;
         updateStarDisplay();
+
+        // Show toast notification
+        showToast(translations[currentLanguage]?.appDetailsLoaded || 'App details loaded!');
     }
     
     function displayAppStats(app) {
@@ -778,6 +1158,7 @@
         const detailSection = getEl('sectionDetail');
         detailSection.classList.remove('active');
         setTimeout(() => detailSection.classList.add('hidden'), 300);
+        handleFilterOrSearch(); // Re-render main content correctly after returning from detail
     }
 
     function showLightbox(index) {
@@ -806,21 +1187,47 @@
         getEl('lightboxPrev').addEventListener('click', showPrevScreenshot);
         getEl('lightboxOverlay').addEventListener('click', (e) => { if (e.target.id === 'lightboxOverlay') hideLightbox(); });
 
-        queryEl('.search').addEventListener('input', () => { clearTimeout(searchDebounceTimeout); searchDebounceTimeout = setTimeout(handleFilterOrSearch, 300); });
-        queryEl('.search-icon').addEventListener('click', (e) => { 
-            e.stopPropagation(); 
-            const header = queryEl('header'); 
-            const searchInput = queryEl('.search');
-            const isActive = header.classList.toggle('search-active');
-            if(isActive) searchInput.focus();
-            else if(searchInput.value) { searchInput.value = ''; handleFilterOrSearch(); }
+        // New Full-Screen Search Event Listeners
+        openFullScreenSearchBtn.addEventListener('click', () => {
+            fullScreenSearchOverlay.classList.add('active');
+            fullScreenSearchInput.focus();
+            getEl('mainContentWrapper').classList.add('hidden'); // Hide main content
+            fullScreenSearchResultsContainer.innerHTML = `<p class="loading-message" data-translate-key="typeToSearch">${translations[currentLanguage]?.typeToSearch || 'Type to search...'}</p>`;
+            clearFullScreenSearchBtn.classList.remove('active');
         });
+
+        closeFullScreenSearchBtn.addEventListener('click', () => {
+            fullScreenSearchOverlay.classList.remove('active');
+            fullScreenSearchInput.value = ''; // Clear input on close
+            clearFullScreenSearchBtn.classList.remove('active');
+            getEl('mainContentWrapper').classList.remove('hidden'); // Show main content
+            handleFilterOrSearch(); // Re-render main sections after closing search
+        });
+
+        fullScreenSearchInput.addEventListener('input', () => {
+            clearTimeout(searchDebounceTimeout);
+            if (fullScreenSearchInput.value.length > 0) {
+                clearFullScreenSearchBtn.classList.add('active');
+            } else {
+                clearFullScreenSearchBtn.classList.remove('active');
+                fullScreenSearchResultsContainer.innerHTML = `<p class="loading-message" data-translate-key="typeToSearch">${translations[currentLanguage]?.typeToSearch || 'Type to search...'}</p>`;
+            }
+            searchDebounceTimeout = setTimeout(applyFullScreenSearch, 300);
+        });
+        
+        clearFullScreenSearchBtn.addEventListener('click', () => {
+            fullScreenSearchInput.value = '';
+            clearFullScreenSearchBtn.classList.remove('active');
+            fullScreenSearchInput.focus();
+            fullScreenSearchResultsContainer.innerHTML = `<p class="loading-message" data-translate-key="typeToSearch">${translations[currentLanguage]?.typeToSearch || 'Type to search...'}</p>`;
+        });
+
 
         getEl('floating-settings-btn').addEventListener('click', () => { getEl('settings-modal').classList.add('open'); getEl('floating-settings-btn').classList.add('rotate'); });
         getEl('close-settings-btn').addEventListener('click', () => { getEl('settings-modal').classList.remove('open'); getEl('floating-settings-btn').classList.remove('rotate'); });
         
         getEl('theme-toggle').addEventListener('change', (e) => { document.body.classList.toggle('light-mode', e.target.checked); localStorage.setItem('theme', e.target.checked ? 'light' : 'dark'); });
-        getEl('language-select').addEventListener('change', (e) => { const lang = e.target.value; localStorage.setItem('language', lang); updateAllUIText(lang); generateCategoryButtons(); });
+        getEl('language-select').addEventListener('change', (e) => { const lang = e.target.value; localStorage.setItem('language', lang); updateAllUIText(lang); generateCategoryButtons(); handleFilterOrSearch(); });
         getEl('items-per-page-select').addEventListener('change', (e) => localStorage.setItem('itemsPerPage', e.target.value));
         getEl('infinite-scroll-toggle').addEventListener('change', (e) => localStorage.setItem('infiniteScroll', e.target.checked));
         getEl('category-filter-buttons').addEventListener('click', (e) => {
@@ -829,19 +1236,24 @@
                 queryEl('#category-filter-buttons button.active')?.classList.remove('active');
                 button.classList.add('active');
                 localStorage.setItem('category', button.dataset.category);
-                handleFilterOrSearch();
+                handleFilterOrSearch(); // Re-render main page content with category filter
             }
         });
         
         getEl('clear-filters-btn').addEventListener('click', () => {
             localStorage.setItem('category', 'all');
-            queryEl('.search').value = '';
             queryEl('#category-filter-buttons button.active')?.classList.remove('active');
             queryEl('#category-filter-buttons button[data-category="all"]')?.classList.add('active');
-            handleFilterOrSearch();
+            handleFilterOrSearch(); // Re-render main page content without filters
             getEl('settings-modal').classList.remove('open');
         });
-        getEl('sort-select').addEventListener('change', handleFilterOrSearch);
+        getEl('sort-select').addEventListener('change', () => {
+            if (fullScreenSearchOverlay.classList.contains('active')) {
+                applyFullScreenSearch(); // If search overlay is open, apply sort to its results
+            } else {
+                handleFilterOrSearch(); // Otherwise, apply sort to main page results
+            }
+        });
         getEl('reset-settings-btn').addEventListener('click', () => { if(confirm('Are you sure?')){ localStorage.clear(); window.location.reload(); } });
         getEl('changelog-btn').addEventListener('click', showChangelog);
         getEl('contact-owner-btn').addEventListener('click', () => { getEl('settings-modal').classList.remove('open'); getEl('popup-form').style.display = 'flex'; });
@@ -1075,30 +1487,54 @@
         }
     }
 
+    let intersectionObserver;
     function setupScrollAnimations() {
         if (!('IntersectionObserver' in window)) return;
         const observerOptions = { root: null, rootMargin: '0px', threshold: 0.01 };
-        const intersectionObserver = new IntersectionObserver((entries) => {
+        
+        intersectionObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 entry.target.classList.toggle('is-visible', entry.isIntersecting);
             });
         }, observerOptions);
-        const mainWrapper = getEl('mainContentWrapper');
-        if (!mainWrapper) return;
-        const mutationObserver = new MutationObserver((mutationsList) => {
+
+        const observeAllCards = () => {
+            queryAll('.item-card, .hot-card-item').forEach(card => {
+                // Ensure we don't observe the same card multiple times
+                intersectionObserver.unobserve(card); 
+                intersectionObserver.observe(card);
+            });
+        };
+
+        // Initial observation
+        observeAllCards();
+
+        // Use MutationObserver to observe dynamically added content
+        const mainContentWrapper = getEl('mainContentWrapper');
+        const fullScreenSearchResults = getEl('fullScreenSearchResults');
+
+        const mutationObserverCallback = (mutationsList) => {
             for (const mutation of mutationsList) {
                 if (mutation.type === 'childList') {
                     mutation.addedNodes.forEach(node => {
-                        if (node.nodeType === 1) { 
-                            node.querySelectorAll('.item-card, .hot-card-item').forEach(card => intersectionObserver.observe(card));
-                            if (node.matches('.item-card, .hot-card-item')) intersectionObserver.observe(node);
+                        if (node.nodeType === 1) { // If it's an element
+                            if (node.matches('.item-card, .hot-card-item')) {
+                                intersectionObserver.observe(node);
+                            }
+                            node.querySelectorAll('.item-card, .hot-card-item').forEach(card => {
+                                intersectionObserver.observe(card);
+                            });
                         }
                     });
                 }
             }
-        });
-        mutationObserver.observe(mainWrapper, { childList: true, subtree: true });
-        queryAll('.item-card, .hot-card-item').forEach(card => intersectionObserver.observe(card));
+        };
+
+        const mainContentMutationObserver = new MutationObserver(mutationObserverCallback);
+        mainContentMutationObserver.observe(mainContentWrapper, { childList: true, subtree: true });
+
+        const searchResultsMutationObserver = new MutationObserver(mutationObserverCallback);
+        searchResultsMutationObserver.observe(fullScreenSearchResults, { childList: true, subtree: true });
     }
 </script>
 
