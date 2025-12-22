@@ -37,14 +37,10 @@
             --shadow-color-medium: rgba(0, 0, 0, 0.4);
             --font-body: 'Poppins', sans-serif;
 
-            /* RGB for ripple effect */
-            --text-color-primary-rgb: 224, 224, 224; /* for #e0e0e0 */
-            --ripple-color: rgba(var(--text-color-primary-rgb), 0.2);
-
             /* RGB Animation Variables */
-            --logo-img-size: 40px; /* The actual image size */
-            --logo-white-border-size: 2px; /* Thickness of the white border around the image */
-            --logo-rgb-glow-size: 3px; /* Thickness of the RGB animated border */
+            --logo-img-size: 40px; 
+            --logo-white-border-size: 2px; 
+            --logo-rgb-glow-size: 3px; 
             --logo-wrapper-size: calc(var(--logo-img-size) + (2 * var(--logo-white-border-size)) + (2 * var(--logo-rgb-glow-size)));
         }
         
@@ -56,13 +52,9 @@
             --border-color: #e2e8f0;
             --shadow-color-light: rgba(0, 0, 0, 0.05);
             --shadow-color-medium: rgba(0, 0, 0, 0.1);
-
-            /* RGB for ripple effect in light mode */
-            --text-color-primary-rgb: 28, 28, 30; /* for #1c1c1e */
-            --ripple-color: rgba(var(--text-color-primary-rgb), 0.08);
         }
 
-        /* --- Scroll Fix: Prevents unwanted horizontal scrolling --- */
+        /* --- Scroll Fix --- */
         html, body {
             overflow-x: hidden; 
             margin: 0;
@@ -77,31 +69,69 @@
             background: var(--bg-color); 
             color: var(--text-color-primary); 
             transition: background 0.3s, color 0.3s;
-            position: relative; /* For ripple effect container */
+            position: relative; 
         }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 15px; }
         
-        /* Ripple effect styles */
-        .ripple-effect {
+        /* --- PREMIUM ICE BLAST EFFECT CSS --- */
+        
+        /* ১. মেইন ফাটল (The Crack) */
+        .ice-crack-center {
             position: absolute;
-            border-radius: 50%;
-            background-color: var(--ripple-color);
-            transform: scale(0);
-            animation: ripple-grow 0.6s ease-out forwards; /* Use forwards to keep last state */
-            pointer-events: none; /* Crucial for not intercepting clicks */
-            z-index: 9999; /* Ensure it's on top of most content */
-            opacity: 0;
+            width: 140px;
+            height: 140px;
+            /* SVG দিয়ে তৈরি ফাটল */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none' stroke='white' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M50 50 L20 15 M50 50 L80 10 M50 50 L90 50 M50 50 L70 85 M50 50 L30 80 M50 50 L10 40' opacity='0.9'/%3E%3Cpath d='M50 50 L45 45 M55 55' stroke-width='1' opacity='0.8'/%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            filter: drop-shadow(0 0 5px cyan);
+            z-index: 99999;
+            animation: crack-fade 0.7s ease-out forwards;
         }
 
-        @keyframes ripple-grow {
-            from { transform: scale(0); opacity: 1; }
-            to { transform: scale(2); opacity: 0; }
+        /* ২. ছিটকে যাওয়া টুকরো (Shards) */
+        .ice-shard {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.9);
+            width: 6px;
+            height: 6px;
+            border-radius: 2px;
+            pointer-events: none;
+            box-shadow: 0 0 5px cyan;
+            z-index: 99999;
         }
+
+        /* ৩. শকওয়েভ (Shockwave) */
+        .ice-shockwave {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 99998;
+            animation: shockwave-anim 0.5s ease-out forwards;
+        }
+
+        @keyframes crack-fade {
+            0% { opacity: 1; transform: translate(-50%, -50%) scale(0.8); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(1.1); }
+        }
+
+        @keyframes shockwave-anim {
+            0% { width: 0; height: 0; opacity: 0.8; border-width: 4px; }
+            100% { width: 200px; height: 200px; opacity: 0; border-width: 0px; }
+        }
+
 
         /* Toast Notification Styles */
         .toast-notification {
             position: fixed;
-            bottom: 80px; /* Above the footer/floating settings btn */
+            bottom: 80px; 
             left: 50%;
             transform: translateX(-50%) translateY(20px);
             background-color: rgba(0, 0, 0, 0.8);
@@ -111,7 +141,7 @@
             z-index: 10000;
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s linear 0.3s; /* Delay visibility change */
+            transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s linear 0.3s;
             min-width: 200px;
             text-align: center;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
@@ -141,13 +171,12 @@
         header { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: var(--header-dark); box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); position: sticky; top: 0; z-index: 100; }
         body.light-mode header { background: var(--header-light); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
         
-        /* New styles for RGB animation around logo */
         .logo-link {
             text-decoration: none;
             color: inherit;
-            display: flex; /* Make the link a flex container to center the logo-wrapper */
+            display: flex;
             align-items: center;
-            margin-right: 10px; /* Spacing for the link */
+            margin-right: 10px;
             flex-shrink: 0;
         }
 
@@ -159,7 +188,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden; /* Hides parts of the rotating gradient outside the circle */
+            overflow: hidden; 
             flex-shrink: 0;
             cursor: pointer;
         }
@@ -176,7 +205,7 @@
             );
             border-radius: 50%;
             animation: rgb-rotate 4s linear infinite;
-            filter: blur(2px); /* Soften the edges of the RGB effect */
+            filter: blur(2px);
             z-index: 0;
         }
 
@@ -189,16 +218,15 @@
             height: var(--logo-img-size);
             border-radius: 50%;
             object-fit: cover;
-            position: relative; /* Stacks it above ::before */
+            position: relative; 
             z-index: 1;
-            /* White border on the logo */
             box-shadow: 0 0 0 var(--logo-white-border-size) white;
         }
 
         .site-title {
             flex-grow: 1;
-            flex-shrink: 1; /* Allow it to shrink */
-            min-width: 0; /* Important for flex items to shrink below their content size */
+            flex-shrink: 1; 
+            min-width: 0;
             text-align: center;
             font-size: 18px;
             font-weight: 600;
@@ -209,11 +237,10 @@
             transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1), max-width 0.4s cubic-bezier(0.23, 1, 0.32, 1);
         }
         
-        /* New Search Button */
         .icon-button {
             background: none;
             border: none;
-            color: white; /* Or your preferred icon color */
+            color: white; 
             cursor: pointer;
             padding: 8px;
             border-radius: 50%;
@@ -222,7 +249,7 @@
             justify-content: center;
             transition: background-color 0.2s ease;
             flex-shrink: 0;
-            -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+            -webkit-tap-highlight-color: transparent; 
         }
         .icon-button:hover {
             background-color: rgba(255, 255, 255, 0.1);
@@ -230,7 +257,7 @@
         .icon-button svg {
             width: 24px;
             height: 24px;
-            stroke: var(--text-color-primary); /* Adjust color for theme */
+            stroke: var(--text-color-primary); 
         }
         body.light-mode .icon-button svg {
             stroke: var(--text-primary-light);
@@ -243,13 +270,13 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: var(--bg-color); /* Inherit main background */
-            z-index: 2000; /* Higher than header */
+            background: var(--bg-color); 
+            z-index: 2000; 
             display: flex;
             flex-direction: column;
             opacity: 0;
             visibility: hidden;
-            transform: translateY(-100%); /* Start off-screen above */
+            transform: translateY(-100%); 
             transition: opacity 0.4s ease-out, transform 0.4s ease-out, visibility 0s 0.4s;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
@@ -266,7 +293,7 @@
             display: flex;
             align-items: center;
             padding: 10px 15px;
-            background: var(--header-dark); /* Match header background */
+            background: var(--header-dark); 
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
             position: sticky;
             top: 0;
@@ -365,12 +392,21 @@
         .category-item-carousel::-webkit-scrollbar { display: none; }
         .category-item-carousel .item-card { flex-shrink: 0; width: 160px; }
 
-        #hearts-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; pointer-events: none; }
-        @keyframes float-up { 0% { bottom: -100px; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { bottom: 100vh; opacity: 0; } }
-        .heart { position: absolute; bottom: -100px; animation: float-up 10s linear infinite; }
-        .heart svg { width: var(--size); height: var(--size); opacity: 0.6; }
-        body.light-mode .heart svg { fill: rgba(222, 49, 99, 0.4); } 
-        body:not(.light-mode) .heart svg { fill: rgba(255, 105, 180, 0.4); }
+        /* --- SNOWFLAKE ANIMATION CSS --- */
+        #snow-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; pointer-events: none; }
+        
+        @keyframes float-up-rotate { 
+            0% { bottom: -100px; opacity: 0; transform: rotate(0deg); } 
+            10% { opacity: 0.8; } 
+            90% { opacity: 0.8; } 
+            100% { bottom: 100vh; opacity: 0; transform: rotate(360deg); } 
+        }
+        
+        .snowflake { position: absolute; bottom: -100px; animation: float-up-rotate 10s linear infinite; }
+        .snowflake svg { width: var(--size); height: var(--size); opacity: 0.7; }
+        
+        body.light-mode .snowflake svg { fill: rgba(0, 188, 212, 0.5); } 
+        body:not(.light-mode) .snowflake svg { fill: rgba(224, 247, 250, 0.4); }
 
         .item-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); min-height: 200px;}
         .item-card { background: var(--surface-color); border-radius: 16px; box-shadow: 0 2px 8px var(--shadow-color-light); transition: transform 0.3s ease, box-shadow 0.3s ease; text-align: center; padding: 15px; position: relative; cursor: pointer; }
@@ -485,8 +521,6 @@
         .not-found-container { grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; text-align: center; }
 
         body[dir="rtl"] { direction: rtl; }
-        /* Removed Telegram Link RTL CSS */
-        /* body[dir="rtl"] .telegram-link { margin-left: 0; margin-right: 10px; } */
         body[dir="rtl"] .search-icon { left: 0; right: auto; }
         body[dir="rtl"] .search { padding: 0 20px 0 45px; }
         body[dir="rtl"] .btn-back { margin-right: 0; margin-left: 15px; }
@@ -498,7 +532,6 @@
         body[dir="rtl"] #settings-modal.open { left: 0; }
         body[dir="rtl"] #floating-settings-btn { right: auto; left: 20px; }
         
-        /* RTL adjustments for the logo link margin */
         body[dir="rtl"] .logo-link {
             margin-left: 10px;
             margin-right: 0;
@@ -558,7 +591,8 @@
     
     <div id="event-theme-html-container"></div>
     
-    <div id="hearts-container"></div>
+    <!-- Snowflakes Container -->
+    <div id="snow-container"></div>
     <div id="preloader"><img src="https://i.ibb.co/MyjL8DZk/IMG-20250502-151238-214.jpg" alt="Loading..."></div>
     
     <header>
@@ -568,7 +602,7 @@
             </div>
         </a>
         <h2 class="site-title animated-text">Premium App Free</h2>
-        <!-- New Search Button -->
+        <!-- Search Button -->
         <button id="open-full-screen-search" class="icon-button">
             <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="11" cy="11" r="8"></circle>
@@ -740,7 +774,11 @@
     let currentLanguage = 'en';
     let currentRating = 0;
     const NEW_DURATION_MS = 3 * 24 * 60 * 60 * 1000;
-    let toastTimeout; // For managing toast notifications
+    let toastTimeout; 
+
+    // --- SOUND EFFECTS INITIALIZATION ---
+    // স্থায়ী সাউন্ড লিংক (Google Server)
+    const breakSound = new Audio('https://actions.google.com/sounds/v1/impacts/glass_breaking_1.ogg');
 
     const firebaseConfig = {
         apiKey: "AIzaSyDklPQcjXfwKIaOoBHQiJbAIq4PrqR2cxs",
@@ -763,7 +801,6 @@
     const queryEl = selector => document.querySelector(selector);
     const queryAll = selector => document.querySelectorAll(selector);
 
-    // New search elements
     const openFullScreenSearchBtn = getEl('open-full-screen-search');
     const closeFullScreenSearchBtn = getEl('close-full-screen-search');
     const fullScreenSearchOverlay = getEl('fullScreenSearchOverlay');
@@ -776,70 +813,125 @@
     document.addEventListener('DOMContentLoaded', () => {
         loadInitialSettings();
         setupEventListeners();
-        setupRippleEffect(); // Setup the ripple effect
-        startFloatingHearts();
+        setupRippleEffect(); // Now sets up PREMIUM BLAST effect
+        startFloatingSnow(); 
         setupSettingsAnimation();
         loadAllData();
         setupScrollAnimations();
         initializeThemeEngine();
-        handleFilterOrSearch(); // Initial render of main content
+        handleFilterOrSearch(); 
     });
 
-    // Function to handle ripple effect
+    // --- REPLACED RIPPLE WITH PREMIUM ICE BLAST EFFECT ---
     function setupRippleEffect() {
-        document.body.addEventListener('click', function(e) {
-            // Check if the clicked element is an interactive element (button, a, input, textarea, select, or has a specific class like 'no-ripple')
-            // or if it's already a ripple.
-            if (e.target.closest('button, a, input, textarea, select, .no-ripple, .icon-button, .btn-back, .logo-link, .hot-card-item, .item-card, .popular-carousel, .ripple-effect') || 
-                e.target.tagName === 'LABEL' || (e.target.tagName === 'SPAN' && e.target.closest('.star-rating'))) {
-                return; // Do not apply ripple to interactive elements or specific excluded elements
-            }
+        // সাউন্ড আগে থেকে লোড করে রাখা হচ্ছে
+        breakSound.load();
 
-            const ripple = document.createElement('span');
-            ripple.classList.add('ripple-effect');
-            document.body.appendChild(ripple);
+        document.addEventListener('click', function(e) {
+            // ১. সাউন্ড প্লে
+            const sound = breakSound.cloneNode();
+            sound.volume = 0.8; // ভলিউম একটু বেশি
+            sound.play().catch(() => {});
 
-            // Calculate size based on the largest dimension of the window for a full spread
-            const size = Math.max(window.innerWidth, window.innerHeight);
-            
-            // Get the bounding rectangle of the body to calculate position relative to it
-            const rect = document.body.getBoundingClientRect();
-            
-            // Calculate ripple position relative to the document.body's top-left corner
-            // Subtract half the ripple size to center it on the click point
-            const x = e.clientX - rect.left - (size / 2);
-            const y = e.clientY - rect.top - (size / 2);
+            // ক্লিক পজিশন
+            const x = e.pageX;
+            const y = e.pageY;
 
-            ripple.style.width = ripple.style.height = `${size}px`;
-            ripple.style.left = `${x}px`;
-            ripple.style.top = `${y}px`;
+            // ২. মাঝখানের ফাটল তৈরি (Main Crack)
+            createCrack(x, y);
 
-            // Remove ripple after animation
-            ripple.addEventListener('animationend', () => {
-                ripple.remove();
-            });
+            // ৩. চারদিকে টুকরো ছড়িয়ে দেওয়া (Explosion)
+            createShards(x, y);
+
+            // ৪. শকওয়েভ তৈরি (Powerful Feel)
+            createShockwave(x, y);
         });
     }
 
-    // Function to show toast notification
+    // হেল্পার ফাংশন: ফাটল তৈরি
+    function createCrack(x, y) {
+        const crack = document.createElement('div');
+        crack.classList.add('ice-crack-center');
+        crack.style.left = x + 'px';
+        crack.style.top = y + 'px';
+        
+        // একটু র‍্যান্ডম রোটেশন
+        const rot = Math.random() * 360;
+        crack.style.transform = `translate(-50%, -50%) rotate(${rot}deg)`;
+        
+        document.body.appendChild(crack);
+        setTimeout(() => crack.remove(), 800);
+    }
+
+    // হেল্পার ফাংশন: শকওয়েভ তৈরি
+    function createShockwave(x, y) {
+        const wave = document.createElement('div');
+        wave.classList.add('ice-shockwave');
+        wave.style.left = x + 'px';
+        wave.style.top = y + 'px';
+        document.body.appendChild(wave);
+        setTimeout(() => wave.remove(), 500);
+    }
+
+    // হেল্পার ফাংশন: টুকরো ছিটকানো
+    function createShards(x, y) {
+        const shardCount = 20; 
+
+        for (let i = 0; i < shardCount; i++) {
+            const shard = document.createElement('div');
+            shard.classList.add('ice-shard');
+            
+            // টুকরোগুলোর সাইজ (৪ থেকে ১০ পিক্সেল)
+            const size = Math.random() * 6 + 4; 
+            shard.style.width = size + 'px';
+            shard.style.height = size + 'px';
+            
+            // পজিশন সেট
+            shard.style.left = x + 'px';
+            shard.style.top = y + 'px';
+            
+            // ভিন্ন ভিন্ন আকৃতি (Shape)
+            shard.style.clipPath = 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)';
+
+            document.body.appendChild(shard);
+
+            // গন্তব্য ঠিক করা (টুকরোটি কত দূরে ছিটকে যাবে)
+            const destinationX = (Math.random() - 0.5) * 200; 
+            const destinationY = (Math.random() - 0.5) * 200;
+            const rotation = Math.random() * 720; 
+
+            // এনিমেশন
+            const animation = shard.animate([
+                { transform: `translate(-50%, -50%) rotate(0deg)`, opacity: 1 },
+                { transform: `translate(calc(-50% + ${destinationX}px), calc(-50% + ${destinationY}px)) rotate(${rotation}deg)`, opacity: 0 }
+            ], {
+                duration: 600 + Math.random() * 400, 
+                easing: 'cubic-bezier(0.25, 1, 0.5, 1)', 
+                fill: 'forwards'
+            });
+
+            animation.onfinish = () => shard.remove();
+        }
+    }
+
+
     function showToast(message) {
         if (toastTimeout) {
             clearTimeout(toastTimeout);
             toastNotificationEl.classList.remove('show');
-            // Give a small delay to allow the removal animation to start before new content/show
             setTimeout(() => {
                 toastNotificationEl.textContent = message;
                 toastNotificationEl.classList.add('show');
                 toastTimeout = setTimeout(() => {
                     toastNotificationEl.classList.remove('show');
-                }, 2500); // Hide after 2.5 seconds
-            }, 300); // Match CSS transition duration for hiding
+                }, 2500); 
+            }, 300); 
         } else {
             toastNotificationEl.textContent = message;
             toastNotificationEl.classList.add('show');
             toastTimeout = setTimeout(() => {
                 toastNotificationEl.classList.remove('show');
-            }, 2500); // Hide after 2.5 seconds
+            }, 2500); 
         }
     }
 
@@ -891,7 +983,7 @@
                     appFirebaseKeyMap[appData.id] = childSnapshot.key;
                 });
                 allAppsData.sort((a,b) => (b.addedTimestamp || 0) - (a.addedTimestamp || 0));
-                handleFilterOrSearch(); // Render main page after loading data
+                handleFilterOrSearch(); 
                 generateCategoryButtons();
             } else {
                 getEl('categoryCarouselsContainer').innerHTML = `<p class="loading-message">No apps found.</p>`;
@@ -903,9 +995,7 @@
         finally { document.body.classList.remove('preloader-active'); }
     }
     
-    // This function now solely manages the visibility and content of the main page sections
     function handleFilterOrSearch() {
-        // If the full-screen search is active, do not interfere with the main content.
         if (fullScreenSearchOverlay.classList.contains('active')) {
             return;
         }
@@ -927,13 +1017,12 @@
             getEl('sort-select').value = 'default';
             latestGridSection.classList.add('hidden');
             hotItemsSection.classList.remove('hidden');
-            carouselsContainer.classList.remove('hidden'); // Ensure carousels are visible when no category filter
+            carouselsContainer.classList.remove('hidden'); 
             renderHotItems(allAppsData);
             renderCategoryCarousels(allAppsData);
         }
     }
 
-    // New function to apply filters only for the main page's "Latest Section"
     function applyMainPageFilters() {
         let filteredApps = [...allAppsData];
         const currentCategory = localStorage.getItem('category') || 'all';
@@ -969,7 +1058,7 @@
             if (app.hotItemBackgroundUrl) {
                 backgroundHTML = `<img src="${escapeHTML(app.hotItemBackgroundUrl)}" alt="Hot Item Background">`;
             } else {
-                backgroundHTML = `<svg viewBox="0 0 280 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 80C50 20, 150 0, 200 50L200 0L0 0L0 80Z" fill="#78B9F5" opacity="0.6"/><path d="M120 0C170 20, 250 80, 280 120L280 0Z" fill="#FDD835" opacity="0.7"/><path d="M0 120C50 180, 150 200, 200 150L200 200L0 200L0 120Z" fill="#F48FB1" opacity="0.6"/><path d="M100 200C150 180, 250 120, 280 80L280 200Z" fill="#81C784" opacity="0.7"/></svg>`;
+                backgroundHTML = `<svg viewBox="0 0 280 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 80C50 20, 150 0, 200 50L200 0L0 0L0 80Z" fill="#78B9F5" opacity="0.6"/><path d="M120 0C170 20, 250 80, 280 120L280 0Z" fill="#FDD835" opacity="0.7"/><path d="M0 120C50 180, 150 200, 200 150L200 200L0 120Z" fill="#F48FB1" opacity="0.6"/><path d="M100 200C150 180, 250 120, 280 80L280 200Z" fill="#81C784" opacity="0.7"/></svg>`;
             }
             const cardHTML = `<div class="hot-card-item" data-app-id="${app.id}"><div class="popular-card-base"><div class="popular-card-abstract-bg">${backgroundHTML}</div>${androidBadgeHTML}<div class="popular-app-logo-wrapper"><img src="${escapeHTML(app.img)}" class="popular-app-logo" alt="${escapeHTML(app.name)} Logo" onerror="this.src='https://i.ibb.co/MyjL8DZk/IMG-20250502-151238-214.jpg'"></div></div><h3 class="popular-card-app-name">${escapeHTML(app.name)}</h3></div>`;
             container.insertAdjacentHTML('beforeend', cardHTML);
@@ -1001,7 +1090,6 @@
         return `<div class="item-card" data-app-id="${app.id}">${newTagHTML}<div class="item-card-icon-container"><img src="${escapeHTML(app.img)}" class="item-card-icon" alt="${escapeHTML(app.name)} icon" onerror="this.src='https://i.ibb.co/MyjL8DZk/IMG-20250502-151238-214.jpg'"></div><div class="item-card-title">${escapeHTML(app.name)}</div><div class="item-card-info"><span>v${app.version}</span><span>${app.size}</span></div></div>`;
     }
 
-    // New function for full-screen search results
     function applyFullScreenSearch() {
         const searchTerm = fullScreenSearchInput.value.toLowerCase();
         let filteredApps = [...allAppsData];
@@ -1021,14 +1109,13 @@
             fullScreenSearchResultsContainer.innerHTML = `<div class="not-found-container"><h3 data-translate-key="notFoundTitle">${translations[currentLanguage]?.notFoundTitle || 'No Results Found'}</h3></div>`;
         }
 
-        // Re-observe newly added cards for animation in the search overlay
         fullScreenSearchResultsContainer.querySelectorAll('.item-card').forEach(card => intersectionObserver.observe(card));
     }
 
     function showItemDetail(app) {
         currentDetailApp = app;
         getEl('mainContentWrapper').classList.add('hidden');
-        fullScreenSearchOverlay.classList.remove('active'); // Hide search overlay if it was open
+        fullScreenSearchOverlay.classList.remove('active'); 
 
         const detailSection = getEl('sectionDetail');
         detailSection.classList.remove('hidden', 'active');
@@ -1093,7 +1180,6 @@
         currentRating = 0;
         updateStarDisplay();
 
-        // Show toast notification
         showToast(translations[currentLanguage]?.appDetailsLoaded || 'App details loaded!');
     }
     
@@ -1158,7 +1244,7 @@
         const detailSection = getEl('sectionDetail');
         detailSection.classList.remove('active');
         setTimeout(() => detailSection.classList.add('hidden'), 300);
-        handleFilterOrSearch(); // Re-render main content correctly after returning from detail
+        handleFilterOrSearch(); 
     }
 
     function showLightbox(index) {
@@ -1187,21 +1273,20 @@
         getEl('lightboxPrev').addEventListener('click', showPrevScreenshot);
         getEl('lightboxOverlay').addEventListener('click', (e) => { if (e.target.id === 'lightboxOverlay') hideLightbox(); });
 
-        // New Full-Screen Search Event Listeners
         openFullScreenSearchBtn.addEventListener('click', () => {
             fullScreenSearchOverlay.classList.add('active');
             fullScreenSearchInput.focus();
-            getEl('mainContentWrapper').classList.add('hidden'); // Hide main content
+            getEl('mainContentWrapper').classList.add('hidden'); 
             fullScreenSearchResultsContainer.innerHTML = `<p class="loading-message" data-translate-key="typeToSearch">${translations[currentLanguage]?.typeToSearch || 'Type to search...'}</p>`;
             clearFullScreenSearchBtn.classList.remove('active');
         });
 
         closeFullScreenSearchBtn.addEventListener('click', () => {
             fullScreenSearchOverlay.classList.remove('active');
-            fullScreenSearchInput.value = ''; // Clear input on close
+            fullScreenSearchInput.value = ''; 
             clearFullScreenSearchBtn.classList.remove('active');
-            getEl('mainContentWrapper').classList.remove('hidden'); // Show main content
-            handleFilterOrSearch(); // Re-render main sections after closing search
+            getEl('mainContentWrapper').classList.remove('hidden'); 
+            handleFilterOrSearch(); 
         });
 
         fullScreenSearchInput.addEventListener('input', () => {
@@ -1236,7 +1321,7 @@
                 queryEl('#category-filter-buttons button.active')?.classList.remove('active');
                 button.classList.add('active');
                 localStorage.setItem('category', button.dataset.category);
-                handleFilterOrSearch(); // Re-render main page content with category filter
+                handleFilterOrSearch(); 
             }
         });
         
@@ -1244,14 +1329,14 @@
             localStorage.setItem('category', 'all');
             queryEl('#category-filter-buttons button.active')?.classList.remove('active');
             queryEl('#category-filter-buttons button[data-category="all"]')?.classList.add('active');
-            handleFilterOrSearch(); // Re-render main page content without filters
+            handleFilterOrSearch(); 
             getEl('settings-modal').classList.remove('open');
         });
         getEl('sort-select').addEventListener('change', () => {
             if (fullScreenSearchOverlay.classList.contains('active')) {
-                applyFullScreenSearch(); // If search overlay is open, apply sort to its results
+                applyFullScreenSearch(); 
             } else {
-                handleFilterOrSearch(); // Otherwise, apply sort to main page results
+                handleFilterOrSearch(); 
             }
         });
         getEl('reset-settings-btn').addEventListener('click', () => { if(confirm('Are you sure?')){ localStorage.clear(); window.location.reload(); } });
@@ -1276,7 +1361,6 @@
         });
     }
 
-    // --- চূড়ান্ত সমাধান করা রিভিউ সাবমিট ফাংশন ---
     async function handleReviewSubmit(e) {
         e.preventDefault();
         const commentText = getEl('comment-text').value.trim();
@@ -1304,35 +1388,27 @@
         };
         
         try {
-            // ধাপ ১: রিভিউ ডেটাবেজে যোগ করা
             await reviewsRef.push(reviewData);
-            
-            // ধাপ ২: অ্যাপের সামগ্রিক রেটিং আপডেট করা
             const transactionResult = await updateAggregateRating(currentDetailApp.id, currentRating);
 
-            // ধাপ ৩: ট্রানজ্যাকশন সফল হয়েছে কিনা তা নিশ্চিত করা
             if (!transactionResult.committed) {
                 throw new Error("Could not find the app to update its rating. It might have been deleted.");
             }
             
-            // সব সফল হলে ব্যবহারকারীকে ধন্যবাদ জানানো
             alert('Thank you for your review!');
             getEl('comment-form').reset();
             currentRating = 0;
             updateStarDisplay();
 
         } catch (error) {
-            // কোনো ধাপে সমস্যা হলে এরর দেখানো হবে
             console.error("Error submitting review: ", error);
             alert(`Failed to submit review. Please try again. Error: ${error.message}`);
         } finally {
-            // সব শেষে বাটনটি আবার আগের মতো করা
             submitButton.disabled = false;
             submitButton.textContent = 'Submit Review';
         }
     }
 
-    // --- চূড়ান্ত সমাধান করা রেটিং আপডেট ফাংশন ---
     function updateAggregateRating(appId, newRating) {
         const firebaseKey = appFirebaseKeyMap[appId];
         if (!firebaseKey) {
@@ -1350,7 +1426,6 @@
                 app.averageRating = (currentTotalRating + newRating) / app.ratingCount;
                 return app;
             }
-            // যদি অ্যাপটি ডেটাবেজে না পাওয়া যায়, ট্রানজ্যাকশনটি বাতিল হয়ে যাবে
             return undefined; 
         });
     }
@@ -1417,7 +1492,7 @@
     function showChangelog() {
         const popup = getEl('popup');
         const content = getEl('popup-content');
-        content.innerHTML = `<h2 data-translate-key="changelogTitle">${translations[currentLanguage]?.changelogTitle || 'Changelog'}</h2><div class="changelog-content"><h3>Version 4.2</h3><ul><li>Added 'Hot Apps' section for featured apps.</li><li>Prettified settings panel text with icons.</li><li>All settings are fully functional.</li></ul></div>`;
+        content.innerHTML = `<h2 data-translate-key="changelogTitle">${translations[currentLanguage]?.changelogTitle || 'Changelog'}</h2><div class="changelog-content"><h3>Version 4.5 (Winter Update)</h3><ul><li>Added 'Hot Apps' section for featured apps.</li><li><strong>New:</strong> Ice cracking effect on click! ❄️</li><li>Winter theme enabled with falling snow.</li><li>Improved settings panel.</li></ul></div>`;
         popup.style.display = 'flex';
         popup.onclick = (e) => { if(e.target.id === 'popup') popup.style.display = 'none'; };
     }
@@ -1464,19 +1539,21 @@
     
     const escapeHTML = (str) => str ? String(str).replace(/[&<>"']/g, match => ({'&': '&amp;','<': '&lt;','>': '&gt;','"': '&quot;',"'": '&#39;'})[match]) : '';
     
-    function startFloatingHearts() {
-        const container = getEl('hearts-container');
+    function startFloatingSnow() {
+        const container = getEl('snow-container');
         if (container) {
             setInterval(() => {
-                const heartEl = document.createElement('div');
-                heartEl.classList.add('heart');
-                heartEl.innerHTML = `<svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path></svg>`;
-                heartEl.style.setProperty('--size', `${Math.random() * 30 + 15}px`);
-                heartEl.style.left = `${Math.random() * 100}%`;
-                heartEl.style.animationDuration = `${Math.random() * 6 + 7}s`;
-                container.appendChild(heartEl);
-                setTimeout(() => heartEl.remove(), 13000);
-            }, 600);
+                const flakeEl = document.createElement('div');
+                flakeEl.classList.add('snowflake'); 
+                flakeEl.innerHTML = `<svg viewBox="0 0 24 24"><path d="M22,11h-4.17l3.24-3.24l-1.41-1.42L15,11h-2V9l4.66-4.66l-1.42-1.41L13,6.17V2h-2v4.17L7.76,2.93L6.34,4.34L11,9v2H9L4.34,6.34L2.93,7.76L6.17,11H2v2h4.17l-3.24,3.24l1.41,1.42L9,13h2v2l-4.66,4.66l1.42,1.41L11,17.83V22h2v-4.17l3.24,3.24l1.42-1.41L13,15v-2h2l4.66,4.66l1.41-1.42L17.83,13H22V11z"></path></svg>`;
+                
+                flakeEl.style.setProperty('--size', `${Math.random() * 20 + 15}px`);
+                flakeEl.style.left = `${Math.random() * 100}%`;
+                flakeEl.style.animationDuration = `${Math.random() * 5 + 8}s`;
+                
+                container.appendChild(flakeEl);
+                setTimeout(() => flakeEl.remove(), 14000);
+            }, 500); 
         }
     }
 
@@ -1500,16 +1577,13 @@
 
         const observeAllCards = () => {
             queryAll('.item-card, .hot-card-item').forEach(card => {
-                // Ensure we don't observe the same card multiple times
                 intersectionObserver.unobserve(card); 
                 intersectionObserver.observe(card);
             });
         };
 
-        // Initial observation
         observeAllCards();
 
-        // Use MutationObserver to observe dynamically added content
         const mainContentWrapper = getEl('mainContentWrapper');
         const fullScreenSearchResults = getEl('fullScreenSearchResults');
 
@@ -1517,7 +1591,7 @@
             for (const mutation of mutationsList) {
                 if (mutation.type === 'childList') {
                     mutation.addedNodes.forEach(node => {
-                        if (node.nodeType === 1) { // If it's an element
+                        if (node.nodeType === 1) { 
                             if (node.matches('.item-card, .hot-card-item')) {
                                 intersectionObserver.observe(node);
                             }
