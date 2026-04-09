@@ -594,6 +594,25 @@
         #profile-photo-input { display: none; }
         /* ══════════════════════════════════════ */
 
+        
+        .profile-save-btn {
+            margin-top: 10px;
+            padding: 8px 28px;
+            background: var(--accent-green);
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            box-shadow: 0 3px 10px rgba(0,200,83,0.35);
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-family: var(--font-body);
+        }
+        .profile-save-btn:hover { transform: scale(1.05); box-shadow: 0 5px 15px rgba(0,200,83,0.5); }
+        .profile-save-btn:active { transform: scale(0.97); }
+
         #settings-modal { position: fixed; top: 0; right: -320px; width: 300px; height: 100%; background: var(--card-dark); z-index: 11000; box-shadow: -5px 0 15px rgba(0, 0, 0, 0.5); transition: right 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); padding: 20px; overflow-y: auto; }
         #settings-modal.open { right: 0; }
         body.light-mode #settings-modal { background: var(--card-light); }
@@ -861,7 +880,8 @@
                 </button>
             </div>
 
-            <div class="profile-tap-hint">📷 Tap to change photo from Gallery</div>
+            <button class="profile-save-btn" id="profile-save-all-btn">💾 Save Profile</button>
+            <div class="profile-tap-hint" style="margin-top:8px;">📷 Tap photo to change from Gallery</div>
             <input type="file" id="profile-photo-input" accept="image/*">
         </div>
         <!-- ══ END PROFILE SECTION ══ -->
@@ -1107,11 +1127,15 @@
 
     
         // ══════════════════════════════════════════════════════════════
-        // PROFILE SECTION — Full Logic
+        // PROFILE SECTION — Full Logic (Fixed)
         // ══════════════════════════════════════════════════════════════
         function initProfileSection() {
 
-            // ── Unique User ID (separate ID per device) ────────────
+            // Guard: run only once
+            if (window._profileSectionInit) return;
+            window._profileSectionInit = true;
+
+            // ── Unique User ID per device ────────────────────────────
             let uid = localStorage.getItem('user_uid');
             if (!uid) {
                 uid = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
@@ -1120,39 +1144,36 @@
             const PHOTO_KEY = uid + '_profilePhoto';
             const NAME_KEY  = uid + '_profileName';
 
-            // DOM refs
-            const avatarWrapper = getEl('profile-avatar-wrapper');
-            const avatarImg     = getEl('profile-avatar-img');
-            const photoInput    = getEl('profile-photo-input');
-            const nameInput     = getEl('profile-name-input');
-            const nameSaveBtn   = getEl('profile-name-save-btn');
-            const coverBg       = getEl('profile-cover-bg');
+            const avatarWrapper  = getEl('profile-avatar-wrapper');
+            const avatarImg      = getEl('profile-avatar-img');
+            const photoInput     = getEl('profile-photo-input');
+            const nameInput      = getEl('profile-name-input');
+            const nameSaveBtn    = getEl('profile-name-save-btn');
+            const saveAllBtn     = getEl('profile-save-all-btn');
+            const coverBg        = getEl('profile-cover-bg');
 
-            // Default avatar (person icon SVG)
             const DEFAULT_AVATAR = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23888'%3E%3Cpath d='M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z'/%3E%3C/svg%3E";
 
-            // ── Load saved photo ──────────────────────────────────
+            // ── Load saved photo ─────────────────────────────────────
             const savedPhoto = localStorage.getItem(PHOTO_KEY);
             avatarImg.src = savedPhoto || DEFAULT_AVATAR;
 
-            // ── Load saved name ───────────────────────────────────
+            // ── Load saved name ──────────────────────────────────────
             const savedName = localStorage.getItem(NAME_KEY);
             if (savedName) nameInput.value = savedName;
 
-            // ── Load Firebase Cover Background ────────────────────
+            // ── Load Firebase Cover Background ───────────────────────
             try {
                 database.ref('eventConfig/profileBgImage').once('value', snap => {
                     const url = snap.val();
-                    if (url && coverBg) {
-                        coverBg.style.backgroundImage = 'url(' + url + ')';
-                    }
+                    if (url && coverBg) coverBg.style.backgroundImage = 'url(' + url + ')';
                 });
-            } catch(e) { /* Firebase not ready yet — skip */ }
+            } catch(e) {}
 
-            // ── Open gallery on avatar click ──────────────────────
+            // ── Open gallery on avatar click ─────────────────────────
             avatarWrapper.addEventListener('click', () => photoInput.click());
 
-            // ── Handle photo selection ─────────────────────────────
+            // ── Handle photo selection ───────────────────────────────
             photoInput.addEventListener('change', function() {
                 const file = this.files[0];
                 if (!file) return;
@@ -1165,7 +1186,6 @@
                     }, 150);
                     try {
                         localStorage.setItem(PHOTO_KEY, e.target.result);
-                        showToast('✅ Profile photo updated!');
                     } catch(err) {
                         showToast('⚠️ Image too large. Try a smaller photo.');
                     }
@@ -1174,20 +1194,46 @@
                 this.value = '';
             });
 
-            // ── Save name on button click ──────────────────────────
-            nameSaveBtn.addEventListener('click', () => {
+            // ── Save name — inline ✅ button ──────────────────────────
+            function saveName() {
                 const name = nameInput.value.trim();
-                if (!name) { showToast('⚠️ Please enter your name!'); return; }
+                if (!name) return;
                 localStorage.setItem(NAME_KEY, name);
-                showToast('✅ Name saved: ' + name);
-                // bounce animation
+            }
+            nameSaveBtn.addEventListener('click', () => {
+                saveName();
+                showToast('✅ Name saved!');
                 nameSaveBtn.style.transform = 'scale(1.3)';
                 setTimeout(() => { nameSaveBtn.style.transform = 'scale(1)'; }, 300);
             });
 
-            // ── Save name on Enter key ─────────────────────────────
+            // ── Auto-save name on blur (when user taps elsewhere) ────
+            nameInput.addEventListener('blur', saveName);
+
+            // ── Auto-save on Enter key ───────────────────────────────
             nameInput.addEventListener('keydown', e => {
-                if (e.key === 'Enter') nameSaveBtn.click();
+                if (e.key === 'Enter') { saveName(); nameInput.blur(); }
+            });
+
+            // ── Big Save Profile button (saves both name + photo) ────
+            saveAllBtn.addEventListener('click', () => {
+                const name = nameInput.value.trim();
+                if (name) localStorage.setItem(NAME_KEY, name);
+
+                // Photo is already saved on selection, re-confirm
+                const currentPhoto = avatarImg.src;
+                if (currentPhoto && !currentPhoto.includes('svg+xml')) {
+                    try { localStorage.setItem(PHOTO_KEY, currentPhoto); } catch(e) {}
+                }
+
+                // Visual feedback
+                saveAllBtn.textContent = '✅ Saved!';
+                saveAllBtn.style.background = '#00a846';
+                setTimeout(() => {
+                    saveAllBtn.innerHTML = '💾 Save Profile';
+                    saveAllBtn.style.background = '';
+                }, 2000);
+                showToast('✅ Profile saved successfully!');
             });
         }
         // ══════════════════════════════════════════════════════════════
