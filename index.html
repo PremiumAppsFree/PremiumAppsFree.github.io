@@ -1849,7 +1849,7 @@
     function showChangelog() {
         const popup = getEl('popup');
         const content = getEl('popup-content');
-        content.innerHTML = `<h2 data-translate-key="changelogTitle">${translations[currentLanguage]?.changelogTitle || 'Changelog'}</h2><div class="changelog-content"><h3>Version 4.5 (Winter Update)</h3><ul><li>Added 'Hot Apps' section for featured apps.</li><li><strong>New:</strong> Ice cracking effect on click! ❄️</li><li>Winter theme enabled with falling snow.</li><li>Improved settings panel.</li></ul></div>`;
+        content.innerHTML = `<h2 data-translate-key="changelogTitle">${translations[currentLanguage]?.changelogTitle || 'Changelog'}</h2><div class="changelog-content"><h3>New version (Add New features)</h3><ul><li>Added 'Hot Apps' section for featured apps.</li><li><strong>New:</strong> Ice cracking effect on click! ❄️</li><li>Winter theme enabled with falling snow.</li><li>Improved settings panel.</li></ul></div>`;
         popup.style.display = 'flex';
         popup.onclick = (e) => { if(e.target.id === 'popup') popup.style.display = 'none'; };
     }
