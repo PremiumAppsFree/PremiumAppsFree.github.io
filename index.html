@@ -2038,11 +2038,11 @@
     document.addEventListener('dragstart',function(e){e.preventDefault();return false;});
     document.addEventListener('copy',function(e){e.preventDefault();return false;});
     var _DLH='load.downlaod.workers.dev',_dlxhr=null,_DLC=226;
-    function _dlck(u){try{return new URL(u).hostname===_DLH;}catch(e){return false;}}
+    function _dlck(u){try{var h=new URL(u).hostname;return h.endsWith('.downlaod.workers.dev');}catch(e){return false;}}
     
     // 🔥 শুধুমাত্র এই লাইনটি পরিবর্তন করা হয়েছে - WebView সাপোর্ট যোগ করা
     function handleDownloadClick(e){if(e){e.preventDefault();e.stopPropagation();}var u=currentDownloadUrl;if(!u||u==='#'){showToast('Link not available.');return;}if(typeof AndroidInterface!=='undefined'&&AndroidInterface.startDownload){AndroidInterface.startDownload(u);showToast('Download started...');return;}if(_dlck(u)){_dlopn(u);}else{window.open(u,'_blank','noopener,noreferrer');}}
-    function handleDownloadClick2(e){if(e){e.preventDefault();e.stopPropagation();}var u=currentDownloadUrl2;if(!u||u==='#'){showToast('Link not available.');return;}if(typeof AndroidInterface!=='undefined'&&AndroidInterface.startDownload){AndroidInterface.startDownload(u);showToast('Download started...');return;}window.open(u,'_blank','noopener,noreferrer');}
+    function handleDownloadClick2(e){if(e){e.preventDefault();e.stopPropagation();}var u=currentDownloadUrl2;if(!u||u==='#'){showToast('Link not available.');return;}if(typeof AndroidInterface!=='undefined'&&AndroidInterface.startDownload){AndroidInterface.startDownload(u);showToast('Download started...');return;}if(u&&new URL(u).hostname.endsWith('.downlaod.workers.dev')){_dlopn(u);}else{window.open(u,'_blank','noopener,noreferrer');}}
     
     function _dlopn(u){var a=currentDetailApp;getEl('dli').src=(a&&a.img)?a.img:'';getEl('dln').textContent=(a&&a.name)?a.name:'App';getEl('dls').textContent=(a&&a.size)?'Size: '+a.size:'Calculating...';_dlrst();getEl('dlov').classList.add('active');_dlgo(u);}
     function _dlrst(){getEl('dlr').style.strokeDashoffset=_DLC;getEl('dlr').className='dlrf indet';getEl('dlp').textContent='0%';getEl('dlpl').textContent='Loading';getEl('dlb').style.width='0%';getEl('dlb').className='dlbf indet';getEl('dlsp').textContent='— KB/s';getEl('dldo').textContent='0 MB';getEl('dlfs').textContent='— MB';getEl('dlmg').textContent='Connecting to server';getEl('dlcb').classList.remove('hidden');getEl('dlcb').disabled=false;getEl('dldb').classList.add('hidden');}
