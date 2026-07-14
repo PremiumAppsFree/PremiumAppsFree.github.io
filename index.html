@@ -4,10 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Premium Apps Free</title>
-    <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="dns-prefetch" href="https://premiumappsfree-ac666-default-rtdb.firebaseio.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
@@ -77,26 +73,58 @@
         }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 15px; }
         
-        /* --- WATER DROP RIPPLE --- */
-        @keyframes water-ripple-out {
-            0%   { transform:translate(-50%,-50%) scale(0);   opacity:0.6; }
-            100% { transform:translate(-50%,-50%) scale(1);   opacity:0;   }
-        }
-        .wdrop {
-            position: fixed;
-            border-radius: 50%;
+        /* --- PREMIUM ICE BLAST EFFECT CSS --- */
+        
+        /* ১. মেইন ফাটল (The Crack) */
+        .ice-crack-center {
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            /* SVG দিয়ে তৈরি ফাটল */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none' stroke='white' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M50 50 L20 15 M50 50 L80 10 M50 50 L90 50 M50 50 L70 85 M50 50 L30 80 M50 50 L10 40' opacity='0.9'/%3E%3Cpath d='M50 50 L45 45 M55 55' stroke-width='1' opacity='0.8'/%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            transform: translate(-50%, -50%);
             pointer-events: none;
+            filter: drop-shadow(0 0 5px cyan);
             z-index: 99999;
-            will-change: transform, opacity;
-            background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, transparent 65%);
-            border: 1.8px solid rgba(255,255,255,0.5);
-            box-shadow: inset 0 0 8px rgba(255,255,255,0.15);
-            animation: water-ripple-out linear forwards;
+            animation: crack-fade 0.7s ease-out forwards;
         }
-        body.light-mode .wdrop {
-            background: radial-gradient(circle, rgba(100,160,255,0.12) 0%, transparent 65%);
-            border-color: rgba(80,140,255,0.4);
-            box-shadow: inset 0 0 8px rgba(100,160,255,0.1);
+
+        /* ২. ছিটকে যাওয়া টুকরো (Shards) */
+        .ice-shard {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.9);
+            width: 6px;
+            height: 6px;
+            border-radius: 2px;
+            pointer-events: none;
+            box-shadow: 0 0 5px cyan;
+            z-index: 99999;
+        }
+
+        /* ৩. শকওয়েভ (Shockwave) */
+        .ice-shockwave {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 99998;
+            animation: shockwave-anim 0.5s ease-out forwards;
+        }
+
+        @keyframes crack-fade {
+            0% { opacity: 1; transform: translate(-50%, -50%) scale(0.8); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(1.1); }
+        }
+
+        @keyframes shockwave-anim {
+            0% { width: 0; height: 0; opacity: 0.8; border-width: 4px; }
+            100% { width: 200px; height: 200px; opacity: 0; border-width: 0px; }
         }
 
 
@@ -364,33 +392,21 @@
         .category-item-carousel::-webkit-scrollbar { display: none; }
         .category-item-carousel .item-card { flex-shrink: 0; width: 160px; }
 
-        /* --- PREMIUM PINK LOVE / HEART FLOAT ANIMATION --- */
-        #snow-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; pointer-events: none; contain: strict; }
-
-        @keyframes heart-float {
-            0%   { transform: translateY(0)      translateX(0)                          scale(0.75) rotate(-4deg); opacity: 0; }
-            6%   { opacity: 1; }
-            30%  { transform: translateY(-30vh)  translateX(calc(var(--d1) * 1px))      scale(1.05) rotate(4deg); }
-            60%  { transform: translateY(-62vh)  translateX(calc(var(--d2) * 1px))      scale(0.92) rotate(-3deg); }
-            85%  { transform: translateY(-88vh)  translateX(calc(var(--d1) * 0.6px))    scale(1.0)  rotate(3deg);  opacity: 0.6; }
-            100% { transform: translateY(-108vh) translateX(calc(var(--d2) * 0.3px))    scale(0.8)  rotate(-6deg); opacity: 0; }
+        /* --- SNOWFLAKE ANIMATION CSS --- */
+        #snow-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; pointer-events: none; }
+        
+        @keyframes float-up-rotate { 
+            0% { bottom: -100px; opacity: 0; transform: rotate(0deg); } 
+            10% { opacity: 0.8; } 
+            90% { opacity: 0.8; } 
+            100% { bottom: 100vh; opacity: 0; transform: rotate(360deg); } 
         }
-
-        .heart-particle {
-            position: absolute;
-            bottom: 0;
-            will-change: transform, opacity;
-            animation: heart-float var(--dur, 8s) ease-in-out forwards;
-            pointer-events: none;
-            contain: layout style;
-        }
-
-        .heart-particle svg {
-            display: block;
-            width: var(--size, 20px);
-            height: var(--size, 20px);
-            filter: drop-shadow(0 0 5px var(--glow)) drop-shadow(0 0 10px var(--glow2));
-        }
+        
+        .snowflake { position: absolute; bottom: -100px; animation: float-up-rotate 10s linear infinite; }
+        .snowflake svg { width: var(--size); height: var(--size); opacity: 0.7; }
+        
+        body.light-mode .snowflake svg { fill: rgba(0, 188, 212, 0.5); } 
+        body:not(.light-mode) .snowflake svg { fill: rgba(224, 247, 250, 0.4); }
 
         .item-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); min-height: 200px;}
         .item-card { background: var(--surface-color); border-radius: 16px; box-shadow: 0 2px 8px var(--shadow-color-light); transition: transform 0.3s ease, box-shadow 0.3s ease; text-align: center; padding: 15px; position: relative; cursor: pointer; }
@@ -480,8 +496,6 @@
             border-radius: 14px;
             overflow: hidden;
             background: var(--surface-color);
-            width: 100%;
-            contain: layout style;
         }
         /* Firebase cover banner */
         .profile-cover-bg {
@@ -501,9 +515,8 @@
             width: 82px;
             height: 82px;
             cursor: pointer;
-            margin: 0 auto 12px auto;
+            margin-bottom: 12px;
             z-index: 1;
-            display: block;
         }
         .profile-avatar-wrapper::before {
             content: '';
@@ -544,15 +557,12 @@
         .profile-name-row {
             display: flex;
             align-items: center;
-            justify-content: center;
             gap: 7px;
             width: 88%;
-            max-width: 260px;
-            margin: 0 auto 5px auto;
+            margin-bottom: 5px;
         }
         .profile-name-input {
             flex: 1;
-            min-width: 0;
             background: transparent;
             border: none;
             border-bottom: 1.5px solid var(--border-color);
@@ -565,32 +575,20 @@
             font-family: var(--font-body);
         }
         .profile-name-input:focus { border-bottom-color: var(--accent-green); }
-        /* ── Telegram verified badge style ── */
         .profile-name-save-btn {
-            background: linear-gradient(145deg, #2AABEE 0%, #1a8fcf 100%);
-            border: none;
-            border-radius: 50%;
-            width: 28px; height: 28px;
-            min-width: 28px;
+            background: var(--accent-green);
+            border: none; border-radius: 50%;
+            width: 26px; height: 26px;
             display: flex; align-items: center; justify-content: center;
             cursor: pointer; flex-shrink: 0;
-            box-shadow: 0 2px 8px rgba(42,171,238,0.6), 0 0 0 2px rgba(42,171,238,0.2);
-            transition: transform 0.2s, box-shadow 0.2s;
-            padding: 0;
+            transition: transform 0.2s;
         }
-        .profile-name-save-btn:hover { transform: scale(1.15); box-shadow: 0 4px 14px rgba(42,171,238,0.8), 0 0 0 3px rgba(42,171,238,0.25); }
-        .profile-name-save-btn:active { transform: scale(0.93); }
-        /* Telegram blue tick SVG */
-        .profile-name-save-btn svg {
-            width: 16px;
-            height: 16px;
-            flex-shrink: 0;
-        }
+        .profile-name-save-btn:hover { transform: scale(1.15); }
+        .profile-name-save-btn .material-icons { font-size: 14px; color: #fff; }
         .profile-tap-hint {
             font-size: 11px;
             color: var(--text-color-secondary);
             opacity: 0.65;
-            text-align: center;
         }
         #profile-photo-input { display: none; }
         /* ══════════════════════════════════════ */
@@ -614,11 +612,11 @@
         .profile-save-btn:hover { transform: scale(1.05); box-shadow: 0 5px 15px rgba(0,200,83,0.5); }
         .profile-save-btn:active { transform: scale(0.97); }
 
-        #settings-modal { position: fixed; top: 0; right: 0; width: 300px; height: 100%; background: var(--card-dark); z-index: 11000; box-shadow: -5px 0 15px rgba(0, 0, 0, 0.5); transform: translateX(320px); transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); padding: 20px; overflow-y: auto; will-change: transform; overscroll-behavior: contain; }
-        #settings-modal.open { transform: translateX(0); }
+        #settings-modal { position: fixed; top: 0; right: -320px; width: 300px; height: 100%; background: var(--card-dark); z-index: 11000; box-shadow: -5px 0 15px rgba(0, 0, 0, 0.5); transition: right 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); padding: 20px; overflow-y: auto; }
+        #settings-modal.open { right: 0; }
         body.light-mode #settings-modal { background: var(--card-light); }
-        .setting-option { margin-bottom: 25px; opacity: 0; transform: translateY(20px); transition: opacity 0.4s ease-out, transform 0.4s ease-out; will-change: transform, opacity; contain: layout style; }
-        .setting-option.is-visible { opacity: 1; transform: translateY(0); will-change: auto; }
+        .setting-option { margin-bottom: 25px; opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease-out, transform 0.5s ease-out; }
+        .setting-option.is-visible { opacity: 1; transform: translateY(0); }
         #settings-modal .settings-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         #settings-modal h2 { font-size: 24px; }
         #settings-modal .close-btn { font-size: 30px; cursor: pointer; }
@@ -660,8 +658,8 @@
         body[dir="rtl"] .label-switch-container { flex-direction: row-reverse; }
         body[dir="rtl"] .setting-option label, body[dir="rtl"] .setting-option .label-switch-container > span { gap: 8px; }
         body[dir="rtl"] .settings-header { flex-direction: row-reverse; }
-        body[dir="rtl"] #settings-modal { right: auto; left: 0; transform: translateX(-320px); transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); box-shadow: 5px 0 15px rgba(0,0,0,0.5); }
-        body[dir="rtl"] #settings-modal.open { transform: translateX(0); }
+        body[dir="rtl"] #settings-modal { right: auto; left: -320px; transition: left 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); box-shadow: 5px 0 15px rgba(0,0,0,0.5); }
+        body[dir="rtl"] #settings-modal.open { left: 0; }
         body[dir="rtl"] #floating-settings-btn { right: auto; left: 20px; }
         
         body[dir="rtl"] .logo-link {
@@ -769,7 +767,7 @@
     <div id="preloader"><img src="https://i.ibb.co/MyjL8DZk/IMG-20250502-151238-214.jpg" alt="Loading..."></div>
     
     <header>
-        <a href="https://t.me/+D4b-FK6OG6swOTI1" target="_blank" class="logo-link">
+        <a href="https://telegram.me/+D4b-FK6OG6swOTI1" target="_blank" class="logo-link">
             <div class="logo-wrapper">
                 <img src="https://i.ibb.co/MyjL8DZk/IMG-20250502-151238-214.jpg" alt="Logo" class="logo">
             </div>
@@ -919,10 +917,7 @@
                        placeholder="Enter your name..."
                        maxlength="30">
                 <button class="profile-name-save-btn" id="profile-name-save-btn" title="Save name">
-                    <!-- Telegram Premium Blue Verified Tick -->
-                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path fill="#fff" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                    </svg>
+                    <span class="material-icons">check</span>
                 </button>
             </div>
 
@@ -994,34 +989,13 @@
         </div>
     </div></div>
 
-    <footer id="main-footer" style="position:relative;overflow:hidden;background:#0a0a0f;color:white;text-align:center;padding:36px 20px 28px;font-family:'Poppins',sans-serif;">
-        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#00c853,#2979ff,#00e5ff,#ff4081,#00c853);background-size:300%;animation:_fba 4s linear infinite;"></div>
-        <div style="position:absolute;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(0,200,83,0.10),transparent 70%);top:-70px;left:-50px;animation:_fbl 7s ease-in-out infinite;pointer-events:none;"></div>
-        <div style="position:absolute;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(41,121,255,0.09),transparent 70%);bottom:-60px;right:-40px;animation:_fbl 9s ease-in-out infinite reverse;pointer-events:none;"></div>
-        <div style="position:relative;z-index:1;max-width:420px;margin:0 auto;">
-            <div style="margin-bottom:4px;">
-                <span style="font-size:17px;font-weight:800;letter-spacing:1.5px;background:linear-gradient(90deg,#00c853,#00e5ff,#2979ff,#00c853);background-size:250%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:_fbt 4s linear infinite;">PremiumAppsFree</span>
-            </div>
-            <p style="margin:0 0 4px;font-size:11px;color:rgba(255,255,255,0.35);">Copyright ©️ clam 2026</p>
-            <p style="margin:0 0 16px;font-size:11px;color:rgba(255,255,255,0.28);">We respect copyright — no copyright content intended</p>
-            <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent);margin-bottom:18px;"></div>
-            <a href="https://telegram.me/apps_pro_freee1" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:11px 26px;background:linear-gradient(135deg,#0088cc,#005fa3);color:#fff;text-decoration:none;font-size:13px;font-weight:700;border-radius:50px;box-shadow:0 4px 20px rgba(0,136,204,0.45);letter-spacing:0.3px;animation:_fbp 3s ease-in-out infinite;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.247l-2.03 9.564c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.182 14.06l-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.463c.537-.194 1.006.131.836.527z"/></svg>
-                Join Telegram Channel
-            </a>
-            <div style="margin-top:18px;">
-                <a href="https://telegram.me/apps_pro_freee1" target="_blank" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
-                    <span style="font-size:12px;color:rgba(255,255,255,0.38);">Developer By</span>
-                    <span style="font-size:15px;font-weight:800;background:linear-gradient(90deg,#00ffcc,#2979ff,#ff4081,#00ffcc);background-size:250%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:_fbt 3s linear infinite;letter-spacing:1px;">𓃠Ｒ𝔸𝐉𓃠</span>
-                </a>
-            </div>
-        </div>
-        <style>
-            @keyframes _fba{0%{background-position:0%}100%{background-position:300%}}
-            @keyframes _fbt{0%{background-position:0%}100%{background-position:250%}}
-            @keyframes _fbl{0%,100%{transform:translateY(0)}50%{transform:translateY(20px)}}
-            @keyframes _fbp{0%,100%{box-shadow:0 4px 20px rgba(0,136,204,0.45)}50%{box-shadow:0 6px 32px rgba(0,136,204,0.75)}}
-        </style>
+    <footer style="background-color: #111; color: white; text-align: center; padding: 20px 10px; font-family: sans-serif;">
+        <p style="margin: 5px;">PremiumAppsFree Pvt Ltd</p>
+        <p style="margin: 5px;">Copyright ©️ clam 2026</p>
+        <p style="margin: 5px;">We respect copyright — no copyright content intended</p>
+        <p style="margin: 5px;"><a href="https://telegram.me/+D4b-FK6OG6swOTI1" target="_blank" style="color: #00acee; text-decoration: none;">Join our Telegram Channel</a></p>
+        <p style="margin-top: 20px; animation: fadeInFooter 2s infinite alternate;"><a href="#" target="_blank" style="color: #00ffcc; text-decoration: none; font-weight: bold;">Developer By 𓃠Ｒ𝔸𝐉𓃠</a></p>
+        <style> @keyframes fadeInFooter { from { opacity: 0.4; } to { opacity: 1; } } </style>
     </footer>
 
     <!-- Toast Notification HTML -->
@@ -1046,6 +1020,7 @@
 
     // --- SOUND EFFECTS INITIALIZATION ---
     // স্থায়ী সাউন্ড লিংক (Google Server)
+    const breakSound = new Audio('https://actions.google.com/sounds/v1/impacts/glass_breaking_1.ogg');
 
     const firebaseConfig = {
         apiKey: "AIzaSyDklPQcjXfwKIaOoBHQiJbAIq4PrqR2cxs",
@@ -1090,36 +1065,97 @@
         initPushNotifications(); // Start Notification Listener
     });
 
-    // --- WATER DROP RIPPLE EFFECT ---
+    // --- REPLACED RIPPLE WITH PREMIUM ICE BLAST EFFECT ---
     function setupRippleEffect() {
-        // ৫টা concentric ঢেউ — ভেতর থেকে বাইরে, আসল পানির drop এর মতো
-        // প্রতিটা ring আলাদা speed ও size — natural দেখায়
-        const W = [
-            { s:  60, d: 380 },
-            { s: 130, d: 520 },
-            { s: 210, d: 660 },
-            { s: 300, d: 800 },
-            { s: 390, d: 940 },
-        ];
-        const GAP = 55; // ms ফাঁকে ফাঁকে বের হয়
+        // সাউন্ড আগে থেকে লোড করে রাখা হচ্ছে
+        breakSound.load();
 
         document.addEventListener('click', function(e) {
-            const x = e.clientX, y = e.clientY;
-            W.forEach((w, i) => {
-                setTimeout(() => {
-                    const el = document.createElement('div');
-                    el.className = 'wdrop';
-                    el.style.cssText =
-                        'left:' + x + 'px;top:' + y + 'px;' +
-                        'width:' + w.s + 'px;height:' + w.s + 'px;' +
-                        'animation-duration:' + w.d + 'ms;';
-                    document.body.appendChild(el);
-                    setTimeout(() => { if(el.parentNode) el.remove(); }, w.d + 20);
-                }, i * GAP);
-            });
-        }, { passive: true });
+            // ১. সাউন্ড প্লে
+            const sound = breakSound.cloneNode();
+            sound.volume = 0.8; // ভলিউম একটু বেশি
+            sound.play().catch(() => {});
+
+            // ক্লিক পজিশন
+            const x = e.pageX;
+            const y = e.pageY;
+
+            // ২. মাঝখানের ফাটল তৈরি (Main Crack)
+            createCrack(x, y);
+
+            // ৩. চারদিকে টুকরো ছড়িয়ে দেওয়া (Explosion)
+            createShards(x, y);
+
+            // ৪. শকওয়েভ তৈরি (Powerful Feel)
+            createShockwave(x, y);
+        });
     }
 
+    // হেল্পার ফাংশন: ফাটল তৈরি
+    function createCrack(x, y) {
+        const crack = document.createElement('div');
+        crack.classList.add('ice-crack-center');
+        crack.style.left = x + 'px';
+        crack.style.top = y + 'px';
+        
+        // একটু র‍্যান্ডম রোটেশন
+        const rot = Math.random() * 360;
+        crack.style.transform = `translate(-50%, -50%) rotate(${rot}deg)`;
+        
+        document.body.appendChild(crack);
+        setTimeout(() => crack.remove(), 800);
+    }
+
+    // হেল্পার ফাংশন: শকওয়েভ তৈরি
+    function createShockwave(x, y) {
+        const wave = document.createElement('div');
+        wave.classList.add('ice-shockwave');
+        wave.style.left = x + 'px';
+        wave.style.top = y + 'px';
+        document.body.appendChild(wave);
+        setTimeout(() => wave.remove(), 500);
+    }
+
+    // হেল্পার ফাংশন: টুকরো ছিটকানো
+    function createShards(x, y) {
+        const shardCount = 20; 
+
+        for (let i = 0; i < shardCount; i++) {
+            const shard = document.createElement('div');
+            shard.classList.add('ice-shard');
+            
+            // টুকরোগুলোর সাইজ (৪ থেকে ১০ পিক্সেল)
+            const size = Math.random() * 6 + 4; 
+            shard.style.width = size + 'px';
+            shard.style.height = size + 'px';
+            
+            // পজিশন সেট
+            shard.style.left = x + 'px';
+            shard.style.top = y + 'px';
+            
+            // ভিন্ন ভিন্ন আকৃতি (Shape)
+            shard.style.clipPath = 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)';
+
+            document.body.appendChild(shard);
+
+            // গন্তব্য ঠিক করা (টুকরোটি কত দূরে ছিটকে যাবে)
+            const destinationX = (Math.random() - 0.5) * 200; 
+            const destinationY = (Math.random() - 0.5) * 200;
+            const rotation = Math.random() * 720; 
+
+            // এনিমেশন
+            const animation = shard.animate([
+                { transform: `translate(-50%, -50%) rotate(0deg)`, opacity: 1 },
+                { transform: `translate(calc(-50% + ${destinationX}px), calc(-50% + ${destinationY}px)) rotate(${rotation}deg)`, opacity: 0 }
+            ], {
+                duration: 600 + Math.random() * 400, 
+                easing: 'cubic-bezier(0.25, 1, 0.5, 1)', 
+                fill: 'forwards'
+            });
+
+            animation.onfinish = () => shard.remove();
+        }
+    }
 
 
     function showToast(message) {
@@ -1294,59 +1330,28 @@
         getEl('sort-select').value = 'default';
     }
 
-    /* ── Fast Load: cache + 4s failsafe ── */
-    const _CK='paf_v1', _CT='paf_ts', _CTTL=5*60*1000, _T0=Date.now();
-    let _ldone=false;
-    function _hl(){if(_ldone)return;const w=Math.max(0,900-(Date.now()-_T0));setTimeout(()=>{_ldone=true;document.body.classList.remove('preloader-active');},w);}
-    setTimeout(_hl,4000);
-
     async function loadAllData() {
         try {
-            const raw=localStorage.getItem(_CK), ts=parseInt(localStorage.getItem(_CT)||'0');
-            const isFresh=raw&&(Date.now()-ts<_CTTL);
-            if(raw){
-                try{
-                    const c=JSON.parse(raw);
-                    if(Array.isArray(c)&&c.length){
-                        allAppsData=c; appFirebaseKeyMap={};
-                        allAppsData.forEach(a=>{if(a._k)appFirebaseKeyMap[a.id]=a._k;});
-                        allAppsData.sort((a,b)=>(b.addedTimestamp||0)-(a.addedTimestamp||0));
-                        handleFilterOrSearch(); generateCategoryButtons(); _hl();
-                    } else { localStorage.removeItem(_CK); }
-                }catch(e){localStorage.removeItem(_CK);}
-            }
-            if(isFresh&&allAppsData.length){
-                appsRef.once('value').then(s=>{
-                    if(!s.exists())return;
-                    const arr=[];
-                    s.forEach(c=>{const d=c.val();d._k=c.key;arr.push(d);});
-                    try{localStorage.setItem(_CK,JSON.stringify(arr));localStorage.setItem(_CT,String(Date.now()));}catch(e){}
-                }).catch(()=>{});
-                return;
-            }
             const allAppsSnapshot = await appsRef.once('value');
             if (allAppsSnapshot.exists()) {
                 allAppsData = [];
                 appFirebaseKeyMap = {};
                 allAppsSnapshot.forEach(childSnapshot => {
                     const appData = childSnapshot.val();
-                    appData._k = childSnapshot.key;
                     allAppsData.push(appData);
                     appFirebaseKeyMap[appData.id] = childSnapshot.key;
                 });
-                try{localStorage.setItem(_CK,JSON.stringify(allAppsData));localStorage.setItem(_CT,String(Date.now()));}catch(e){}
                 allAppsData.sort((a,b) => (b.addedTimestamp || 0) - (a.addedTimestamp || 0));
                 handleFilterOrSearch(); 
                 generateCategoryButtons();
-            } else if(!allAppsData.length) {
+            } else {
                 getEl('categoryCarouselsContainer').innerHTML = `<p class="loading-message">No apps found.</p>`;
             }
         } catch(e) { 
-            console.error("Data load failed:", e);
-            if(!allAppsData.length)
-                getEl('categoryCarouselsContainer').innerHTML = `<p class="loading-message">Failed to load apps. Please check console.</p>`;
+            console.error("Data load failed:", e); 
+            getEl('categoryCarouselsContainer').innerHTML = `<p class="loading-message">Failed to load apps. Please check console.</p>`;
         }
-        finally { _hl(); }
+        finally { document.body.classList.remove('preloader-active'); }
     }
     
     function handleFilterOrSearch() {
@@ -1414,7 +1419,7 @@
             } else {
                 backgroundHTML = `<svg viewBox="0 0 280 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 80C50 20, 150 0, 200 50L200 0L0 0L0 80Z" fill="#78B9F5" opacity="0.6"/><path d="M120 0C170 20, 250 80, 280 120L280 0Z" fill="#FDD835" opacity="0.7"/><path d="M0 120C50 180, 150 200, 200 150L200 200L0 120Z" fill="#F48FB1" opacity="0.6"/><path d="M100 200C150 180, 250 120, 280 80L280 200Z" fill="#81C784" opacity="0.7"/></svg>`;
             }
-            const cardHTML = `<div class="hot-card-item" data-app-id="${app.id}"><div class="popular-card-base"><div class="popular-card-abstract-bg">${backgroundHTML}</div>${androidBadgeHTML}<div class="popular-app-logo-wrapper"><img src="${escapeHTML(app.img)}" class="popular-app-logo" loading="lazy" decoding="async" alt="${escapeHTML(app.name)} Logo" onerror="this.src='https://i.ibb.co/MyjL8DZk/IMG-20250502-151238-214.jpg'"></div></div><h3 class="popular-card-app-name">${escapeHTML(app.name)}</h3></div>`;
+            const cardHTML = `<div class="hot-card-item" data-app-id="${app.id}"><div class="popular-card-base"><div class="popular-card-abstract-bg">${backgroundHTML}</div>${androidBadgeHTML}<div class="popular-app-logo-wrapper"><img src="${escapeHTML(app.img)}" class="popular-app-logo" alt="${escapeHTML(app.name)} Logo" onerror="this.src='https://i.ibb.co/MyjL8DZk/IMG-20250502-151238-214.jpg'"></div></div><h3 class="popular-card-app-name">${escapeHTML(app.name)}</h3></div>`;
             container.insertAdjacentHTML('beforeend', cardHTML);
         });
         container.querySelectorAll('.hot-card-item').forEach(card => intersectionObserver.observe(card));
@@ -1898,54 +1903,20 @@
     
     function startFloatingSnow() {
         const container = getEl('snow-container');
-        if (!container) return;
-
-        let heartId = 0;
-        const MAX_HEARTS = 16;
-
-        const palettes = [
-            { c1: '#ff2d78', c2: '#ff8fab', glow: 'rgba(255,45,120,0.6)',  glow2: 'rgba(255,143,171,0.3)' },
-            { c1: '#e91e8c', c2: '#ff6ec7', glow: 'rgba(233,30,140,0.6)',  glow2: 'rgba(255,110,199,0.3)' },
-            { c1: '#ff006e', c2: '#ff85b3', glow: 'rgba(255,0,110,0.55)',  glow2: 'rgba(255,133,179,0.3)' },
-            { c1: '#c9184a', c2: '#ff4d6d', glow: 'rgba(201,24,74,0.55)',  glow2: 'rgba(255,77,109,0.3)'  },
-            { c1: '#ff0a54', c2: '#ff90b3', glow: 'rgba(255,10,84,0.6)',   glow2: 'rgba(255,144,179,0.3)' },
-        ];
-
-        function spawnHeart() {
-            if (container.children.length >= MAX_HEARTS) return;
-
-            const id   = 'hg' + (heartId++ & 0xffff);
-            const pal  = palettes[Math.floor(Math.random() * palettes.length)];
-            const size = Math.random() * 20 + 11;
-            const dur  = Math.random() * 5  + 7;
-            const d1   = (Math.random() - 0.5) * 80;
-            const d2   = (Math.random() - 0.5) * 60;
-
-            const el = document.createElement('div');
-            el.classList.add('heart-particle');
-            el.style.cssText =
-                '--size:' + size + 'px;--dur:' + dur + 's;--d1:' + d1 + ';--d2:' + d2 + ';' +
-                '--glow:' + pal.glow + ';--glow2:' + pal.glow2 + ';' +
-                'left:' + (Math.random() * 96 + 2) + '%';
-
-            el.innerHTML =
-                '<svg viewBox="0 0 32 29.6" xmlns="http://www.w3.org/2000/svg">' +
-                '<defs><linearGradient id="' + id + '" x1="0%" y1="0%" x2="100%" y2="100%">' +
-                '<stop offset="0%" stop-color="' + pal.c1 + '"/>' +
-                '<stop offset="100%" stop-color="' + pal.c2 + '"/>' +
-                '</linearGradient></defs>' +
-                '<path fill="url(#' + id + ')" d="M16 29.6C16 29.6 0 19.2 0 8.8C0 3.9 3.9 0 8.8 0C11.7 0 14.3 1.4 16 3.6C17.7 1.4 20.3 0 23.2 0C28.1 0 32 3.9 32 8.8C32 19.2 16 29.6 16 29.6Z"/>' +
-                '</svg>';
-
-            container.appendChild(el);
-            setTimeout(() => { if (el.parentNode) el.remove(); }, (dur + 0.5) * 1000);
+        if (container) {
+            setInterval(() => {
+                const flakeEl = document.createElement('div');
+                flakeEl.classList.add('snowflake'); 
+                flakeEl.innerHTML = `<svg viewBox="0 0 24 24"><path d="M22,11h-4.17l3.24-3.24l-1.41-1.42L15,11h-2V9l4.66-4.66l-1.42-1.41L13,6.17V2h-2v4.17L7.76,2.93L6.34,4.34L11,9v2H9L4.34,6.34L2.93,7.76L6.17,11H2v2h4.17l-3.24,3.24l1.41,1.42L9,13h2v2l-4.66,4.66l1.42,1.41L11,17.83V22h2v-4.17l3.24,3.24l1.42-1.41L13,15v-2h2l4.66,4.66l1.41-1.42L17.83,13H22V11z"></path></svg>`;
+                
+                flakeEl.style.setProperty('--size', `${Math.random() * 20 + 15}px`);
+                flakeEl.style.left = `${Math.random() * 100}%`;
+                flakeEl.style.animationDuration = `${Math.random() * 5 + 8}s`;
+                
+                container.appendChild(flakeEl);
+                setTimeout(() => flakeEl.remove(), 14000);
+            }, 500); 
         }
-
-        let timer = setInterval(spawnHeart, 520);
-        document.addEventListener('visibilitychange', () => {
-            clearInterval(timer);
-            if (!document.hidden) timer = setInterval(spawnHeart, 520);
-        });
     }
 
     function setupSettingsAnimation() {
